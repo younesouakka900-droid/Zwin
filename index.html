@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>ZWIN — ⚡ اكسب مع كل نقرة</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -903,6 +904,31 @@ function showToast(msg) {
   `;
   document.body.appendChild(t);
   setTimeout(() => t.remove(), 2200);
+}
+
+// ========= TELEGRAM SDK =========
+const tg = window.Telegram?.WebApp;
+if (tg) {
+  // Initialize
+  tg.ready();
+  tg.expand(); // فتح اللعبة بملء الشاشة
+
+  // جلب اسم المستخدم من تيليغرام
+  const tgUser = tg.initDataUnsafe?.user;
+  if (tgUser) {
+    const displayName = tgUser.first_name || tgUser.username || 'يونس';
+    document.getElementById('userName').textContent = displayName;
+    // حفظ Telegram ID في الـ state
+    state.telegramId   = tgUser.id;
+    state.telegramName = displayName;
+  }
+
+  // ألوان تيليغرام
+  tg.setHeaderColor('#0a0612');
+  tg.setBackgroundColor('#0a0612');
+
+  // زر الإغلاق الاحترافي
+  tg.BackButton.onClick(() => tg.close());
 }
 
 // ========= INIT =========
