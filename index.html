@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>ZWIN — ⚡ اكسب مع كل نقرة</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #0a0612;
+  --bg2:      #100920;
+  --card:     #130d24;
+  --border:   #2a1d4a;
+  --purple:   #7c3aed;
+  --purple2:  #a855f7;
+  --purple3:  #d8b4fe;
+  --gold:     #f59e0b;
+  --gold2:    #fcd34d;
+  --gold3:    #fef3c7;
+  --green:    #10b981;
+  --red:      #ef4444;
+  --text:     #ede9fe;
+  --muted:    #6d5a8a;
+  --tab-h:    68px;
+  --glow:     rgba(124,58,237,0.4);
+  --glow-g:   rgba(245,158,11,0.4);
+}
+
+*{ margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+body{
+  font-family:'Cairo',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  max-width:430px;
+  margin:0 auto;
+  overflow-x:hidden;
+  user-select:none;
+}
+
+/* ====== STARS BG ====== */
+body::before{
+  content:'';
+  position:fixed; inset:0; z-index:0;
+  background:
+    radial-gradient(ellipse at 50% -10%, rgba(124,58,237,0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 80%, rgba(245,158,11,0.06) 0%, transparent 40%),
+    radial-gradient(1.5px 1.5px at 12% 18%, rgba(255,255,255,0.18) 0%, transparent 100%),
+    radial-gradient(1px 1px at 85% 12%, rgba(255,255,255,0.14) 0%, transparent 100%),
+    radial-gradient(1px 1px at 33% 55%, rgba(255,255,255,0.10) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 65% 78%, rgba(255,255,255,0.12) 0%, transparent 100%),
+    radial-gradient(1px 1px at 48% 90%, rgba(255,255,255,0.08) 0%, transparent 100%),
+    radial-gradient(1px 1px at 91% 45%, rgba(255,255,255,0.10) 0%, transparent 100%);
+  pointer-events:none;
+}
+
+/* ====== SCREENS ====== */
+.screen{ display:none; flex-direction:column; min-height:calc(100vh - var(--tab-h)); padding-bottom:calc(var(--tab-h) + 8px); position:relative; z-index:1; }
+.screen.active{ display:flex; }
+
+/* ====== TOPBAR ====== */
+.topbar{
+  padding:14px 16px 10px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.user-info{ display:flex; align-items:center; gap:10px; }
+.avatar{
+  width:44px; height:44px; border-radius:14px;
+  background:linear-gradient(135deg,#7c3aed,#a855f7);
+  display:flex; align-items:center; justify-content:center;
+  font-size:22px;
+  box-shadow:0 4px 16px rgba(124,58,237,0.5);
+  border:1px solid rgba(168,85,247,0.4);
+}
+.user-name{ font-size:15px; font-weight:800; color:var(--text); }
+.user-level{ font-size:11px; color:var(--purple2); font-weight:600; }
+
+.balance-top{
+  background:rgba(245,158,11,0.08);
+  border:1px solid rgba(245,158,11,0.25);
+  border-radius:14px;
+  padding:7px 14px;
+  text-align:left;
+}
+.balance-top .val{ font-size:17px; font-weight:900; color:var(--gold2); }
+.balance-top .lbl{ font-size:10px; color:var(--muted); }
+
+/* ====== LEVEL BAR ====== */
+.level-bar-wrap{ padding:0 16px 12px; }
+.level-info{ display:flex; justify-content:space-between; font-size:11px; color:var(--muted); margin-bottom:5px; }
+.level-info span:first-child{ color:var(--purple2); font-weight:700; }
+.progress-track{ height:6px; background:rgba(255,255,255,0.06); border-radius:99px; overflow:hidden; }
+.progress-fill{
+  height:100%; border-radius:99px;
+  background:linear-gradient(90deg, var(--purple), var(--purple2), var(--gold));
+  transition:width 0.4s ease;
+  box-shadow:0 0 10px var(--glow);
+}
+
+/* ====== STATS ROW ====== */
+.stats-row{
+  display:grid; grid-template-columns:1fr 1fr 1fr;
+  gap:8px; padding:0 16px 16px;
+}
+.stat-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:10px;
+  text-align:center;
+}
+.stat-card .s-val{ font-size:15px; font-weight:800; color:var(--gold2); }
+.stat-card .s-lbl{ font-size:10px; color:var(--muted); margin-top:2px; }
+
+/* ====== COIN AREA ====== */
+.coin-area{
+  flex:1;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:18px; padding:10px 0 20px;
+  position:relative;
+}
+
+.energy-bar-wrap{ width:82%; }
+.energy-info{ display:flex; justify-content:space-between; font-size:11px; color:var(--muted); margin-bottom:5px; }
+.energy-track{ height:8px; background:rgba(255,255,255,0.06); border-radius:99px; overflow:hidden; }
+.energy-fill{
+  height:100%; border-radius:99px;
+  background:linear-gradient(90deg, var(--purple), var(--purple2));
+  transition:width 0.3s ease;
+  box-shadow:0 0 8px var(--glow);
+}
+
+/* ====== ZWIN BUTTON ====== */
+.coin-btn-wrap{ position:relative; }
+
+.coin-btn{
+  width:210px; height:210px;
+  border-radius:50%;
+  border:none;
+  cursor:pointer;
+  position:relative;
+  background:
+    radial-gradient(circle at 38% 32%, #c084fc 0%, #7c3aed 40%, #4c1d95 80%, #2e1065 100%);
+  box-shadow:
+    0 0 0 6px rgba(124,58,237,0.12),
+    0 0 0 16px rgba(124,58,237,0.06),
+    0 0 50px rgba(124,58,237,0.5),
+    0 0 100px rgba(124,58,237,0.2),
+    inset 0 -10px 24px rgba(0,0,0,0.35);
+  transition:transform 0.08s ease, box-shadow 0.08s ease;
+  display:flex; align-items:center; justify-content:center;
+  font-size:76px;
+  -webkit-user-select:none;
+}
+
+/* Gold ring around button */
+.coin-btn::before{
+  content:'';
+  position:absolute; inset:-4px;
+  border-radius:50%;
+  background:conic-gradient(
+    from 0deg,
+    transparent 0%,
+    rgba(245,158,11,0.6) 20%,
+    transparent 40%,
+    rgba(245,158,11,0.3) 60%,
+    transparent 80%,
+    rgba(245,158,11,0.6) 100%
+  );
+  animation:spinRing 6s linear infinite;
+  z-index:-1;
+}
+@keyframes spinRing{ to{ transform:rotate(360deg); } }
+
+.coin-btn:active{
+  transform:scale(0.92);
+  box-shadow:
+    0 0 0 4px rgba(124,58,237,0.2),
+    0 0 30px rgba(124,58,237,0.4),
+    inset 0 -6px 14px rgba(0,0,0,0.5);
+}
+
+.coin-btn .inner-text{
+  position:absolute;
+  font-size:12px; font-weight:900;
+  color:rgba(255,255,255,0.35);
+  letter-spacing:3px;
+  bottom:44px;
+  width:100%; text-align:center;
+}
+
+.tap-hint{
+  font-size:13px; color:var(--muted);
+  animation:pulse2 2s infinite;
+}
+@keyframes pulse2{ 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+/* ====== FLOAT +N ====== */
+.float-num{
+  position:fixed;
+  font-size:24px; font-weight:900;
+  color:var(--gold2);
+  pointer-events:none; z-index:999;
+  text-shadow:0 0 14px var(--glow-g), 0 2px 8px rgba(0,0,0,0.5);
+  animation:floatUp 0.9s ease forwards;
+}
+@keyframes floatUp{
+  0%  { opacity:1; transform:translateY(0) scale(1.1); }
+  100%{ opacity:0; transform:translateY(-90px) scale(0.6); }
+}
+
+/* ====== RIPPLE ====== */
+.ripple{
+  position:absolute; border-radius:50%;
+  background:rgba(216,180,254,0.25);
+  pointer-events:none;
+  animation:rippleOut 0.55s ease forwards;
+}
+@keyframes rippleOut{
+  0%  { transform:scale(0); opacity:1; }
+  100%{ transform:scale(3.5); opacity:0; }
+}
+
+/* ====== BOTTOM TABS ====== */
+.tabs{
+  position:fixed; bottom:0; left:50%; transform:translateX(-50%);
+  width:100%; max-width:430px;
+  height:var(--tab-h);
+  background:rgba(13,9,28,0.95);
+  border-top:1px solid var(--border);
+  display:grid; grid-template-columns:repeat(4,1fr);
+  z-index:100;
+  backdrop-filter:blur(24px);
+}
+.tab-btn{
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:3px; border:none; background:transparent;
+  color:var(--muted); cursor:pointer;
+  font-family:'Cairo',sans-serif; font-size:11px;
+  transition:color 0.2s;
+  position:relative;
+}
+.tab-btn .icon{ font-size:22px; }
+.tab-btn.active{ color:var(--purple2); }
+.tab-btn.active::before{
+  content:'';
+  position:absolute; top:0; left:50%; transform:translateX(-50%);
+  width:32px; height:2px;
+  background:linear-gradient(90deg, var(--purple), var(--purple2));
+  border-radius:0 0 4px 4px;
+  box-shadow:0 0 8px var(--glow);
+}
+
+/* ====== SCREEN TITLE ====== */
+.screen-title{
+  padding:16px 16px 10px;
+  font-size:20px; font-weight:900;
+}
+.screen-title span{ color:var(--purple2); }
+
+/* ====== TASKS ====== */
+.tasks-list{ padding:0 16px; display:flex; flex-direction:column; gap:10px; }
+
+.task-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:14px 16px;
+  display:flex; align-items:center; gap:14px;
+  transition:border-color 0.2s;
+}
+.task-card.done{ opacity:0.45; }
+.task-card:not(.done){ cursor:pointer; }
+.task-card:not(.done):active{ border-color:var(--purple2); }
+
+.task-icon{
+  width:46px; height:46px; border-radius:12px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:22px; flex-shrink:0;
+}
+.task-info{ flex:1; }
+.task-info h3{ font-size:14px; font-weight:700; }
+.task-info p{ font-size:11px; color:var(--muted); margin-top:2px; }
+
+.task-reward{ text-align:left; flex-shrink:0; }
+.task-reward .rew-val{ font-size:14px; font-weight:800; color:var(--gold2); }
+.task-reward .rew-lbl{ font-size:10px; color:var(--muted); }
+
+.task-check{
+  width:28px; height:28px; border-radius:50%;
+  background:var(--green);
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px; flex-shrink:0;
+}
+
+/* daily reset badge */
+.daily-badge{
+  font-size:10px; background:rgba(124,58,237,0.2);
+  border:1px solid rgba(124,58,237,0.4);
+  color:var(--purple2); border-radius:6px;
+  padding:1px 6px; display:inline-block; margin-top:3px;
+}
+
+/* ====== UPGRADES ====== */
+.upgrades-grid{
+  padding:0 16px;
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.upgrade-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:14px;
+  cursor:pointer;
+  transition:all 0.2s;
+  position:relative;
+  overflow:hidden;
+}
+.upgrade-card::before{
+  content:'';
+  position:absolute; top:0; left:0;
+  width:70px; height:70px;
+  background:radial-gradient(circle, rgba(124,58,237,0.07) 0%, transparent 70%);
+  pointer-events:none;
+}
+.upgrade-card:active{ transform:scale(0.97); }
+.upgrade-card.maxed{ opacity:0.45; cursor:default; }
+.upgrade-card.can-buy{ border-color:rgba(168,85,247,0.45); box-shadow:0 0 16px rgba(124,58,237,0.15); }
+
+.upg-icon{ font-size:30px; margin-bottom:8px; }
+.upg-name{ font-size:13px; font-weight:700; margin-bottom:4px; }
+.upg-desc{ font-size:10px; color:var(--muted); margin-bottom:10px; line-height:1.4; }
+.upg-footer{ display:flex; align-items:center; justify-content:space-between; }
+.upg-level{
+  font-size:10px; color:var(--muted);
+  background:rgba(255,255,255,0.05);
+  padding:3px 8px; border-radius:20px;
+}
+.upg-cost{ font-size:13px; font-weight:800; color:var(--gold2); }
+
+/* ====== LEADERBOARD ====== */
+.lb-list{ padding:0 16px; display:flex; flex-direction:column; gap:8px; }
+.lb-item{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:12px 14px;
+  display:flex; align-items:center; gap:12px;
+}
+.lb-item.me{ border-color:rgba(168,85,247,0.45); background:rgba(124,58,237,0.07); }
+.lb-rank{ font-size:18px; font-weight:900; width:30px; text-align:center; flex-shrink:0; }
+.lb-rank.gold{ color:#ffd700; }
+.lb-rank.silver{ color:#c0c0c0; }
+.lb-rank.bronze{ color:#cd7f32; }
+.lb-av{
+  width:38px; height:38px; border-radius:10px;
+  background:linear-gradient(135deg,#1e1040,#2d1b69);
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; flex-shrink:0;
+}
+.lb-info{ flex:1; }
+.lb-info h4{ font-size:13px; font-weight:700; }
+.lb-info p{ font-size:10px; color:var(--muted); }
+.lb-score{ font-size:14px; font-weight:800; color:var(--gold2); }
+
+/* ====== TOAST ====== */
+@keyframes fadeUp{ from{opacity:0;transform:translateX(-50%) translateY(10px)} to{opacity:1;transform:translateX(-50%) translateY(0)} }
+
+/* ====== SCROLL ====== */
+.screen{ overflow-y:auto; }
+::-webkit-scrollbar{ width:3px; }
+::-webkit-scrollbar-track{ background:transparent; }
+::-webkit-scrollbar-thumb{ background:var(--border); border-radius:99px; }
+</style>
+</head>
+<body>
+
+<!-- ========= HOME ========= -->
+<div class="screen active" id="screen-home">
+
+  <div class="topbar">
+    <div class="user-info">
+      <div class="avatar">⚡</div>
+      <div>
+        <div class="user-name" id="userName">يونس</div>
+        <div class="user-level" id="userLevelName">✦ مبتدئ</div>
+      </div>
+    </div>
+    <div class="balance-top">
+      <div class="val" id="balanceTop">0 <small style="font-size:10px;color:var(--muted)">$ZWIN</small></div>
+      <div class="lbl">رصيدك الكلي</div>
+    </div>
+  </div>
+
+  <div class="level-bar-wrap">
+    <div class="level-info">
+      <span id="levelLabel">المستوى 1</span>
+      <span id="levelProgress">0 / 1,000</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="s-val" id="statPerTap">1</div>
+      <div class="s-lbl">⚡ لكل نقرة</div>
+    </div>
+    <div class="stat-card">
+      <div class="s-val" id="statPerHour">0</div>
+      <div class="s-lbl">🌙 في الساعة</div>
+    </div>
+    <div class="stat-card">
+      <div class="s-val" id="statTaps">0</div>
+      <div class="s-lbl">👆 نقرات</div>
+    </div>
+  </div>
+
+  <div class="coin-area">
+
+    <div class="energy-bar-wrap">
+      <div class="energy-info">
+        <span>⚡ الطاقة</span>
+        <span id="energyText">500 / 500</span>
+      </div>
+      <div class="energy-track">
+        <div class="energy-fill" id="energyFill" style="width:100%"></div>
+      </div>
+    </div>
+
+    <div class="coin-btn-wrap">
+      <button class="coin-btn" id="coinBtn"
+        ontouchstart="handleTap(event)"
+        onmousedown="handleTap(event)">
+        ⚡
+        <span class="inner-text">ZWIN</span>
+      </button>
+    </div>
+
+    <div class="tap-hint">انقر واكسب $ZWIN ✦</div>
+  </div>
+
+</div>
+
+<!-- ========= TASKS ========= -->
+<div class="screen" id="screen-tasks">
+  <div class="screen-title">المهام <span>✦</span></div>
+  <div class="tasks-list" id="tasksList"></div>
+</div>
+
+<!-- ========= UPGRADES ========= -->
+<div class="screen" id="screen-upgrades">
+  <div class="screen-title">الترقيات <span>⚡</span></div>
+  <div class="upgrades-grid" id="upgradesGrid"></div>
+</div>
+
+<!-- ========= LEADERBOARD ========= -->
+<div class="screen" id="screen-lb">
+  <div class="screen-title">المتصدرون <span>🏆</span></div>
+  <div class="lb-list" id="lbList"></div>
+</div>
+
+<!-- ========= TABS ========= -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('home',this)">
+    <span class="icon">🏠</span>الرئيسية
+  </button>
+  <button class="tab-btn" onclick="switchTab('tasks',this)">
+    <span class="icon">📋</span>المهام
+  </button>
+  <button class="tab-btn" onclick="switchTab('upgrades',this)">
+    <span class="icon">⚡</span>الترقيات
+  </button>
+  <button class="tab-btn" onclick="switchTab('lb',this)">
+    <span class="icon">🏆</span>المتصدرون
+  </button>
+</div>
+
+<script>
+// ========= STATE =========
+const DEFAULT_TASKS = [
+  { id:1, icon:'📱', bg:'#1a0d3a', name:'تابع قناة ZWIN', desc:'اشترك في قناة تيليغرام', reward:500, done:false, type:'social' },
+  { id:2, icon:'👥', bg:'#2d1060', name:'ادعُ صديقاً', desc:'شارك رابط الإحالة', reward:1000, done:false, type:'social' },
+  { id:3, icon:'⚡', bg:'#1a1000', name:'انقر 100 مرة', desc:'انقر الزر الرئيسي 100 مرة', reward:200, done:false, target:100, type:'taps', daily:true },
+  { id:4, icon:'💰', bg:'#1a0d00', name:'اكسب 500 ZWIN', desc:'اجمع 500 نقطة', reward:300, done:false, target:500, type:'balance', daily:true },
+  { id:5, icon:'🔋', bg:'#0d1a2a', name:'استنفد طاقتك', desc:'استخدم كل الطاقة المتاحة', reward:150, done:false, type:'energy', daily:true },
+];
+
+const state = {
+  balance: 0,
+  totalEarned: 0,
+  taps: 0,
+  energy: 500,
+  maxEnergy: 500,
+  perTap: 1,
+  perHour: 0,
+  energyRegen: 3,
+  dailyBonusUnlocked: false,
+  lastDailyBonus: 0,
+  lastDailyReset: 0,
+  lastSaved: Date.now(),
+  tasks: JSON.parse(JSON.stringify(DEFAULT_TASKS)),
+  upgrades: [
+    { id:1, icon:'⚡', name:'نقر قوي', desc:'زد كسبك لكل نقرة', perTapBonus:1, costBase:100, level:0, maxLevel:10 },
+    { id:2, icon:'🔋', name:'طاقة موسعة', desc:'زد سعة طاقتك', energyBonus:100, costBase:200, level:0, maxLevel:5 },
+    { id:3, icon:'⚡', name:'شحن سريع', desc:'تعافى الطاقة أسرع', regenBonus:1, costBase:300, level:0, maxLevel:5 },
+    { id:4, icon:'🌙', name:'تعدين ليلي', desc:'اكسب تلقائياً كل ساعة', hourlyBonus:50, costBase:500, level:0, maxLevel:10 },
+    { id:5, icon:'💎', name:'مضاعف ZWIN', desc:'ضاعف كسبك ×2', multiplier:true, costBase:2000, level:0, maxLevel:3 },
+    { id:6, icon:'✦', name:'نجمة الأطلس', desc:'مكافأة يومية +2000 ZWIN', costBase:1500, level:0, maxLevel:1, dailyBonus:true },
+  ],
+  leaderboard: [
+    { name:'محمد الريفي',    score:128400, flag:'🇲🇦', me:false },
+    { name:'فاطمة الزهراء', score:95200,  flag:'🇲🇦', me:false },
+    { name:'عبد الرحمان',   score:74500,  flag:'🇲🇦', me:false },
+    { name:'خديجة أمين',   score:61300,  flag:'🇲🇦', me:false },
+    { name:'يونس',          score:0,      flag:'🇲🇦', me:true  },
+    { name:'حمزة الإدريسي', score:45800,  flag:'🇲🇦', me:false },
+    { name:'سلمى بنعلي',   score:38200,  flag:'🇲🇦', me:false },
+    { name:'يوسف المراكشي', score:29100,  flag:'🇲🇦', me:false },
+  ],
+};
+
+const LEVELS = [
+  { name:'مبتدئ',   req:0 },
+  { name:'متعلم',   req:1000 },
+  { name:'ناشط',    req:5000 },
+  { name:'محترف',   req:15000 },
+  { name:'خبير',    req:40000 },
+  { name:'بطل',     req:100000 },
+  { name:'أسطورة',  req:250000 },
+];
+
+// ========= LOAD =========
+const saved = localStorage.getItem('zwinState');
+if (saved) {
+  try {
+    const s = JSON.parse(saved);
+    Object.assign(state, s);
+    const elapsed = (Date.now() - (state.lastSaved || Date.now())) / 1000;
+    if (state.perHour > 0) {
+      const earned = Math.floor((state.perHour / 3600) * elapsed);
+      state.balance += earned;
+      state.totalEarned += earned;
+    }
+    const regenAmt = Math.floor(elapsed * state.energyRegen);
+    state.energy = Math.min(state.maxEnergy, (state.energy || 0) + regenAmt);
+  } catch(e) {}
+}
+
+function save() {
+  state.lastSaved = Date.now();
+  localStorage.setItem('zwinState', JSON.stringify(state));
+}
+
+// ========= HELPERS =========
+function fmt(n) {
+  if (n >= 1000000) return (n/1000000).toFixed(1)+'M';
+  if (n >= 1000)    return (n/1000).toFixed(1)+'K';
+  return Math.floor(n).toLocaleString('ar-MA');
+}
+
+function getCurrentLevel() {
+  let idx = 0;
+  for (let i = LEVELS.length - 1; i >= 0; i--) {
+    if (state.totalEarned >= LEVELS[i].req) { idx = i; break; }
+  }
+  return idx;
+}
+
+// ========= UI UPDATE =========
+function updateUI() {
+  document.getElementById('balanceTop').innerHTML =
+    fmt(state.balance) + ' <small style="font-size:10px;color:var(--muted)">$ZWIN</small>';
+
+  document.getElementById('statPerTap').textContent  = state.perTap;
+  document.getElementById('statPerHour').textContent = fmt(state.perHour);
+  document.getElementById('statTaps').textContent    = fmt(state.taps);
+
+  const ep = (state.energy / state.maxEnergy) * 100;
+  document.getElementById('energyFill').style.width = ep + '%';
+  document.getElementById('energyText').textContent  =
+    Math.floor(state.energy) + ' / ' + state.maxEnergy;
+
+  const lvlIdx = getCurrentLevel();
+  const lvl    = LEVELS[lvlIdx];
+  const nextLvl= LEVELS[lvlIdx + 1];
+  document.getElementById('userLevelName').textContent = '✦ ' + lvl.name;
+  document.getElementById('levelLabel').textContent    = 'المستوى ' + (lvlIdx + 1);
+
+  if (nextLvl) {
+    const prog = ((state.totalEarned - lvl.req) / (nextLvl.req - lvl.req)) * 100;
+    document.getElementById('progressFill').style.width = Math.min(100, prog) + '%';
+    document.getElementById('levelProgress').textContent =
+      fmt(state.totalEarned - lvl.req) + ' / ' + fmt(nextLvl.req - lvl.req);
+  } else {
+    document.getElementById('progressFill').style.width = '100%';
+    document.getElementById('levelProgress').textContent = 'أقصى مستوى! 🏆';
+  }
+
+  const me = state.leaderboard.find(x => x.me);
+  if (me) me.score = Math.floor(state.totalEarned);
+  state.leaderboard.sort((a, b) => b.score - a.score);
+}
+
+// ========= TAP =========
+function handleTap(e) {
+  e.preventDefault();
+  if (state.energy < 1) { showToast('⚡ انتظر شحن الطاقة!'); return; }
+
+  const touches  = e.touches || [e];
+  const tapsNow  = Math.min(touches.length, Math.floor(state.energy));
+
+  for (let i = 0; i < tapsNow; i++) {
+    const t      = touches[i] || e;
+    const earned = state.perTap;
+    state.balance     += earned;
+    state.totalEarned += earned;
+    state.taps++;
+    state.energy = Math.max(0, state.energy - 1);
+
+    const x = t.clientX || (window.innerWidth  / 2);
+    const y = t.clientY || (window.innerHeight / 2);
+    spawnFloat(x, y, '+' + earned);
+    spawnRipple(e);
+  }
+
+  checkTaskProgress();
+  updateUI();
+  save();
+}
+
+function spawnFloat(x, y, text) {
+  const el = document.createElement('div');
+  el.className   = 'float-num';
+  el.textContent = text;
+  el.style.left  = (x - 20) + 'px';
+  el.style.top   = (y - 30) + 'px';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 900);
+}
+
+function spawnRipple(e) {
+  const btn  = document.getElementById('coinBtn');
+  const rect = btn.getBoundingClientRect();
+  const r    = document.createElement('div');
+  r.className = 'ripple';
+  const size  = 60;
+  r.style.width  = r.style.height = size + 'px';
+  r.style.left   = (rect.width  / 2 - size / 2) + 'px';
+  r.style.top    = (rect.height / 2 - size / 2) + 'px';
+  btn.appendChild(r);
+  setTimeout(() => r.remove(), 550);
+}
+
+// ========= ENERGY REGEN =========
+setInterval(() => {
+  if (state.energy < state.maxEnergy) {
+    state.energy = Math.min(state.maxEnergy, state.energy + state.energyRegen);
+    updateUI();
+  }
+}, 1000);
+
+// ========= PASSIVE INCOME =========
+setInterval(() => {
+  if (state.perHour > 0) {
+    const earned = state.perHour / 3600;
+    state.balance     += earned;
+    state.totalEarned += earned;
+    updateUI();
+  }
+}, 1000);
+
+// ========= DAILY BONUS =========
+const DAILY_BONUS_AMOUNT   = 2000;
+const DAILY_BONUS_COOLDOWN = 24 * 60 * 60 * 1000;
+
+function claimDailyBonus(silent) {
+  if (!state.dailyBonusUnlocked) return;
+  const now  = Date.now();
+  const last = state.lastDailyBonus || 0;
+  if (now - last < DAILY_BONUS_COOLDOWN) {
+    if (!silent) {
+      const remaining = DAILY_BONUS_COOLDOWN - (now - last);
+      const h = Math.floor(remaining / 3600000);
+      const m = Math.floor((remaining % 3600000) / 60000);
+      showToast('⏳ الموعد القادم بعد ' + h + 'س ' + m + 'د');
+    }
+    return;
+  }
+  state.balance     += DAILY_BONUS_AMOUNT;
+  state.totalEarned += DAILY_BONUS_AMOUNT;
+  state.lastDailyBonus = now;
+  showToast('✦ مكافأة يومية! +' + fmt(DAILY_BONUS_AMOUNT) + ' $ZWIN');
+  spawnFloat(window.innerWidth / 2, window.innerHeight / 3, '+' + fmt(DAILY_BONUS_AMOUNT));
+  updateUI();
+  save();
+}
+
+function checkDailyBonusOnLoad() {
+  if (!state.dailyBonusUnlocked) return;
+  if (Date.now() - (state.lastDailyBonus || 0) >= DAILY_BONUS_COOLDOWN) {
+    setTimeout(() => showToast('✦ مكافأتك اليومية جاهزة!'), 1500);
+  }
+}
+
+// ========= DAILY TASK RESET =========
+const DAILY_TASK_IDS = [3, 4, 5];
+function checkDailyTaskReset() {
+  const now = Date.now();
+  if (now - (state.lastDailyReset || 0) >= 24 * 60 * 60 * 1000) {
+    state.tasks.forEach(t => { if (DAILY_TASK_IDS.includes(t.id)) t.done = false; });
+    state.lastDailyReset = now;
+  }
+}
+
+// ========= TASKS =========
+function renderTasks() {
+  const list = document.getElementById('tasksList');
+  list.innerHTML = '';
+  state.tasks.forEach(t => {
+    const div = document.createElement('div');
+    div.className = 'task-card' + (t.done ? ' done' : '');
+    div.innerHTML = `
+      <div class="task-icon" style="background:${t.bg}">${t.icon}</div>
+      <div class="task-info">
+        <h3>${t.name}</h3>
+        <p>${t.desc}</p>
+        ${t.daily ? '<span class="daily-badge">يومي</span>' : ''}
+      </div>
+      <div class="task-reward">
+        <div class="rew-val">+${fmt(t.reward)}</div>
+        <div class="rew-lbl">$ZWIN</div>
+      </div>
+      ${t.done
+        ? '<div class="task-check">✓</div>'
+        : '<div style="color:var(--purple2);font-size:20px">›</div>'}
+    `;
+    if (!t.done) div.onclick = () => claimTask(t.id);
+    list.appendChild(div);
+  });
+}
+
+function claimTask(id) {
+  const t = state.tasks.find(x => x.id === id);
+  if (!t || t.done) return;
+
+  if (t.type === 'taps'    && state.taps < t.target) {
+    showToast('انقر ' + (t.target - state.taps) + ' مرة إضافية!'); return;
+  }
+  if (t.type === 'balance' && state.totalEarned < t.target) {
+    showToast('اكسب ' + fmt(t.target - state.totalEarned) + ' $ZWIN إضافية!'); return;
+  }
+
+  t.done = true;
+  state.balance     += t.reward;
+  state.totalEarned += t.reward;
+  showToast('+' + fmt(t.reward) + ' $ZWIN 🎉');
+  spawnFloat(window.innerWidth / 2, window.innerHeight / 2, '+' + fmt(t.reward));
+  renderTasks();
+  updateUI();
+  save();
+}
+
+function checkTaskProgress() {
+  state.tasks.forEach(t => {
+    if (t.done) return;
+    if (t.type === 'energy' && state.energy === 0) claimTask(t.id);
+  });
+}
+
+// ========= UPGRADES =========
+function getUpgradeCost(u) {
+  return Math.floor(u.costBase * Math.pow(1.8, u.level));
+}
+
+function renderUpgrades() {
+  const grid = document.getElementById('upgradesGrid');
+  grid.innerHTML = '';
+  state.upgrades.forEach(u => {
+    const cost  = getUpgradeCost(u);
+    const isMax = u.level >= u.maxLevel;
+    const canBuy= !isMax && state.balance >= cost;
+    const div   = document.createElement('div');
+    div.className = 'upgrade-card' + (isMax ? ' maxed' : '') + (canBuy ? ' can-buy' : '');
+
+    let levelLabel, costLabel, clickable = !isMax;
+    if (isMax && u.dailyBonus) {
+      levelLabel = '✦ مفعّل';
+      costLabel  = '<span style="color:var(--green);font-size:11px">اضغط للمطالبة</span>';
+      clickable  = true;
+    } else if (isMax) {
+      levelLabel = 'MAX';
+      costLabel  = '—';
+    } else {
+      levelLabel = 'Lv.' + u.level;
+      costLabel  = fmt(cost) + ' $ZWIN';
+    }
+
+    div.innerHTML = `
+      <div class="upg-icon">${u.icon}</div>
+      <div class="upg-name">${u.name}</div>
+      <div class="upg-desc">${u.desc}</div>
+      <div class="upg-footer">
+        <span class="upg-level">${levelLabel}</span>
+        <span class="upg-cost">${costLabel}</span>
+      </div>
+    `;
+    if (clickable) {
+      div.onclick = isMax && u.dailyBonus
+        ? () => claimDailyBonus(false)
+        : () => buyUpgrade(u.id);
+    }
+    grid.appendChild(div);
+  });
+}
+
+function buyUpgrade(id) {
+  const u = state.upgrades.find(x => x.id === id);
+  if (!u || u.level >= u.maxLevel) return;
+  const cost = getUpgradeCost(u);
+  if (state.balance < cost) { showToast('رصيدك غير كافٍ!'); return; }
+
+  state.balance -= cost;
+  u.level++;
+
+  if (u.perTapBonus) state.perTap += u.perTapBonus;
+  if (u.energyBonus) { state.maxEnergy += u.energyBonus; state.energy = Math.min(state.energy + u.energyBonus, state.maxEnergy); }
+  if (u.regenBonus)  state.energyRegen += u.regenBonus;
+  if (u.hourlyBonus) state.perHour += u.hourlyBonus;
+  if (u.multiplier)  state.perTap = Math.ceil(state.perTap * 2);
+  if (u.dailyBonus)  { state.dailyBonusUnlocked = true; claimDailyBonus(true); }
+
+  showToast('تمت الترقية! ⚡');
+  renderUpgrades();
+  updateUI();
+  save();
+}
+
+// ========= LEADERBOARD =========
+function renderLeaderboard() {
+  const list   = document.getElementById('lbList');
+  list.innerHTML = '';
+  const sorted = [...state.leaderboard].sort((a, b) => b.score - a.score);
+  sorted.forEach((p, i) => {
+    const rankClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+    const rankIcon  = i === 0 ? '🥇'   : i === 1 ? '🥈'     : i === 2 ? '🥉'    : (i + 1);
+    const div = document.createElement('div');
+    div.className = 'lb-item' + (p.me ? ' me' : '');
+    div.innerHTML = `
+      <div class="lb-rank ${rankClass}">${rankIcon}</div>
+      <div class="lb-av">${p.flag}</div>
+      <div class="lb-info">
+        <h4>${p.name}${p.me ? ' (أنت)' : ''}</h4>
+        <p>المستوى ${getCurrentLevel() + 1}</p>
+      </div>
+      <div class="lb-score">${fmt(p.score)}</div>
+    `;
+    list.appendChild(div);
+  });
+}
+
+// Leaderboard NPC simulation
+setInterval(() => {
+  state.leaderboard.forEach(p => {
+    if (p.me) return;
+    p.score += Math.floor(Math.random() * 800 + 100);
+  });
+  renderLeaderboard();
+  save();
+}, 60000);
+
+// ========= TABS =========
+function switchTab(name, btn) {
+  document.querySelectorAll('.screen').forEach(s  => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  btn.classList.add('active');
+  if (name === 'tasks')    renderTasks();
+  if (name === 'upgrades') renderUpgrades();
+  if (name === 'lb')       renderLeaderboard();
+}
+
+// ========= TOAST =========
+function showToast(msg) {
+  const existing = document.querySelector('.toast');
+  if (existing) existing.remove();
+  const t = document.createElement('div');
+  t.className   = 'toast';
+  t.textContent = msg;
+  t.style.cssText = `
+    position:fixed; bottom:88px; left:50%; transform:translateX(-50%);
+    background:linear-gradient(135deg,rgba(124,58,237,0.95),rgba(168,85,247,0.95));
+    color:#fff; font-weight:700;
+    padding:10px 22px; border-radius:14px; font-size:14px;
+    z-index:9999; font-family:'Cairo',sans-serif;
+    animation: fadeUp 0.3s ease;
+    box-shadow:0 4px 20px rgba(124,58,237,0.4);
+    border:1px solid rgba(216,180,254,0.2);
+    white-space:nowrap;
+  `;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2200);
+}
+
+// ========= INIT =========
+checkDailyTaskReset();
+checkDailyBonusOnLoad();
+updateUI();
+</script>
+</body>
+</html>
