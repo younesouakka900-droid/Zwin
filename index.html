@@ -3,938 +3,526 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>ZWIN — ⚡ اكسب مع كل نقرة</title>
+<title>ZWIN</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:       #0a0612;
-  --bg2:      #100920;
-  --card:     #130d24;
-  --border:   #2a1d4a;
-  --purple:   #7c3aed;
-  --purple2:  #a855f7;
-  --purple3:  #d8b4fe;
-  --gold:     #f59e0b;
-  --gold2:    #fcd34d;
-  --gold3:    #fef3c7;
-  --green:    #10b981;
-  --red:      #ef4444;
-  --text:     #ede9fe;
-  --muted:    #6d5a8a;
-  --tab-h:    68px;
-  --glow:     rgba(124,58,237,0.4);
-  --glow-g:   rgba(245,158,11,0.4);
-}
-
-*{ margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-
-body{
-  font-family:'Cairo',sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  min-height:100vh;
-  max-width:430px;
-  margin:0 auto;
-  overflow-x:hidden;
-  user-select:none;
-}
-
-/* ====== STARS BG ====== */
-body::before{
-  content:'';
-  position:fixed; inset:0; z-index:0;
-  background:
-    radial-gradient(ellipse at 50% -10%, rgba(124,58,237,0.18) 0%, transparent 55%),
-    radial-gradient(ellipse at 80% 80%, rgba(245,158,11,0.06) 0%, transparent 40%),
-    radial-gradient(1.5px 1.5px at 12% 18%, rgba(255,255,255,0.18) 0%, transparent 100%),
-    radial-gradient(1px 1px at 85% 12%, rgba(255,255,255,0.14) 0%, transparent 100%),
-    radial-gradient(1px 1px at 33% 55%, rgba(255,255,255,0.10) 0%, transparent 100%),
-    radial-gradient(1.5px 1.5px at 65% 78%, rgba(255,255,255,0.12) 0%, transparent 100%),
-    radial-gradient(1px 1px at 48% 90%, rgba(255,255,255,0.08) 0%, transparent 100%),
-    radial-gradient(1px 1px at 91% 45%, rgba(255,255,255,0.10) 0%, transparent 100%);
-  pointer-events:none;
-}
-
-/* ====== SCREENS ====== */
-.screen{ display:none; flex-direction:column; min-height:calc(100vh - var(--tab-h)); padding-bottom:calc(var(--tab-h) + 8px); position:relative; z-index:1; }
-.screen.active{ display:flex; }
-
-/* ====== TOPBAR ====== */
-.topbar{
-  padding:14px 16px 10px;
-  display:flex; align-items:center; justify-content:space-between;
-}
-.user-info{ display:flex; align-items:center; gap:10px; }
-.avatar{
-  width:44px; height:44px; border-radius:14px;
-  background:linear-gradient(135deg,#7c3aed,#a855f7);
-  display:flex; align-items:center; justify-content:center;
-  font-size:22px;
-  box-shadow:0 4px 16px rgba(124,58,237,0.5);
-  border:1px solid rgba(168,85,247,0.4);
-}
-.user-name{ font-size:15px; font-weight:800; color:var(--text); }
-.user-level{ font-size:11px; color:var(--purple2); font-weight:600; }
-
-.balance-top{
-  background:rgba(245,158,11,0.08);
-  border:1px solid rgba(245,158,11,0.25);
-  border-radius:14px;
-  padding:7px 14px;
-  text-align:left;
-}
-.balance-top .val{ font-size:17px; font-weight:900; color:var(--gold2); }
-.balance-top .lbl{ font-size:10px; color:var(--muted); }
-
-/* ====== LEVEL BAR ====== */
-.level-bar-wrap{ padding:0 16px 12px; }
-.level-info{ display:flex; justify-content:space-between; font-size:11px; color:var(--muted); margin-bottom:5px; }
-.level-info span:first-child{ color:var(--purple2); font-weight:700; }
-.progress-track{ height:6px; background:rgba(255,255,255,0.06); border-radius:99px; overflow:hidden; }
-.progress-fill{
-  height:100%; border-radius:99px;
-  background:linear-gradient(90deg, var(--purple), var(--purple2), var(--gold));
-  transition:width 0.4s ease;
-  box-shadow:0 0 10px var(--glow);
-}
-
-/* ====== STATS ROW ====== */
-.stats-row{
-  display:grid; grid-template-columns:1fr 1fr 1fr;
-  gap:8px; padding:0 16px 16px;
-}
-.stat-card{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:10px;
-  text-align:center;
-}
-.stat-card .s-val{ font-size:15px; font-weight:800; color:var(--gold2); }
-.stat-card .s-lbl{ font-size:10px; color:var(--muted); margin-top:2px; }
-
-/* ====== COIN AREA ====== */
-.coin-area{
-  flex:1;
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  gap:18px; padding:10px 0 20px;
-  position:relative;
-}
-
-.energy-bar-wrap{ width:82%; }
-.energy-info{ display:flex; justify-content:space-between; font-size:11px; color:var(--muted); margin-bottom:5px; }
-.energy-track{ height:8px; background:rgba(255,255,255,0.06); border-radius:99px; overflow:hidden; }
-.energy-fill{
-  height:100%; border-radius:99px;
-  background:linear-gradient(90deg, var(--purple), var(--purple2));
-  transition:width 0.3s ease;
-  box-shadow:0 0 8px var(--glow);
-}
-
-/* ====== ZWIN BUTTON ====== */
-.coin-btn-wrap{ position:relative; }
-
-.coin-btn{
-  width:210px; height:210px;
-  border-radius:50%;
-  border:none;
-  cursor:pointer;
-  position:relative;
-  background:
-    radial-gradient(circle at 38% 32%, #c084fc 0%, #7c3aed 40%, #4c1d95 80%, #2e1065 100%);
-  box-shadow:
-    0 0 0 6px rgba(124,58,237,0.12),
-    0 0 0 16px rgba(124,58,237,0.06),
-    0 0 50px rgba(124,58,237,0.5),
-    0 0 100px rgba(124,58,237,0.2),
-    inset 0 -10px 24px rgba(0,0,0,0.35);
-  transition:transform 0.08s ease, box-shadow 0.08s ease;
-  display:flex; align-items:center; justify-content:center;
-  font-size:76px;
-  -webkit-user-select:none;
-}
-
-/* Gold ring around button */
-.coin-btn::before{
-  content:'';
-  position:absolute; inset:-4px;
-  border-radius:50%;
-  background:conic-gradient(
-    from 0deg,
-    transparent 0%,
-    rgba(245,158,11,0.6) 20%,
-    transparent 40%,
-    rgba(245,158,11,0.3) 60%,
-    transparent 80%,
-    rgba(245,158,11,0.6) 100%
-  );
-  animation:spinRing 6s linear infinite;
-  z-index:-1;
-}
-@keyframes spinRing{ to{ transform:rotate(360deg); } }
-
-.coin-btn:active{
-  transform:scale(0.92);
-  box-shadow:
-    0 0 0 4px rgba(124,58,237,0.2),
-    0 0 30px rgba(124,58,237,0.4),
-    inset 0 -6px 14px rgba(0,0,0,0.5);
-}
-
-.coin-btn .inner-text{
-  position:absolute;
-  font-size:12px; font-weight:900;
-  color:rgba(255,255,255,0.35);
-  letter-spacing:3px;
-  bottom:44px;
-  width:100%; text-align:center;
-}
-
-.tap-hint{
-  font-size:13px; color:var(--muted);
-  animation:pulse2 2s infinite;
-}
-@keyframes pulse2{ 0%,100%{opacity:1} 50%{opacity:0.4} }
-
-/* ====== FLOAT +N ====== */
-.float-num{
-  position:fixed;
-  font-size:24px; font-weight:900;
-  color:var(--gold2);
-  pointer-events:none; z-index:999;
-  text-shadow:0 0 14px var(--glow-g), 0 2px 8px rgba(0,0,0,0.5);
-  animation:floatUp 0.9s ease forwards;
-}
-@keyframes floatUp{
-  0%  { opacity:1; transform:translateY(0) scale(1.1); }
-  100%{ opacity:0; transform:translateY(-90px) scale(0.6); }
-}
-
-/* ====== RIPPLE ====== */
-.ripple{
-  position:absolute; border-radius:50%;
-  background:rgba(216,180,254,0.25);
-  pointer-events:none;
-  animation:rippleOut 0.55s ease forwards;
-}
-@keyframes rippleOut{
-  0%  { transform:scale(0); opacity:1; }
-  100%{ transform:scale(3.5); opacity:0; }
-}
-
-/* ====== BOTTOM TABS ====== */
-.tabs{
-  position:fixed; bottom:0; left:50%; transform:translateX(-50%);
-  width:100%; max-width:430px;
-  height:var(--tab-h);
-  background:rgba(13,9,28,0.95);
-  border-top:1px solid var(--border);
-  display:grid; grid-template-columns:repeat(4,1fr);
-  z-index:100;
-  backdrop-filter:blur(24px);
-}
-.tab-btn{
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  gap:3px; border:none; background:transparent;
-  color:var(--muted); cursor:pointer;
-  font-family:'Cairo',sans-serif; font-size:11px;
-  transition:color 0.2s;
-  position:relative;
-}
-.tab-btn .icon{ font-size:22px; }
-.tab-btn.active{ color:var(--purple2); }
-.tab-btn.active::before{
-  content:'';
-  position:absolute; top:0; left:50%; transform:translateX(-50%);
-  width:32px; height:2px;
-  background:linear-gradient(90deg, var(--purple), var(--purple2));
-  border-radius:0 0 4px 4px;
-  box-shadow:0 0 8px var(--glow);
-}
-
-/* ====== SCREEN TITLE ====== */
-.screen-title{
-  padding:16px 16px 10px;
-  font-size:20px; font-weight:900;
-}
-.screen-title span{ color:var(--purple2); }
-
-/* ====== TASKS ====== */
-.tasks-list{ padding:0 16px; display:flex; flex-direction:column; gap:10px; }
-
-.task-card{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:14px 16px;
-  display:flex; align-items:center; gap:14px;
-  transition:border-color 0.2s;
-}
-.task-card.done{ opacity:0.45; }
-.task-card:not(.done){ cursor:pointer; }
-.task-card:not(.done):active{ border-color:var(--purple2); }
-
-.task-icon{
-  width:46px; height:46px; border-radius:12px;
-  display:flex; align-items:center; justify-content:center;
-  font-size:22px; flex-shrink:0;
-}
-.task-info{ flex:1; }
-.task-info h3{ font-size:14px; font-weight:700; }
-.task-info p{ font-size:11px; color:var(--muted); margin-top:2px; }
-
-.task-reward{ text-align:left; flex-shrink:0; }
-.task-reward .rew-val{ font-size:14px; font-weight:800; color:var(--gold2); }
-.task-reward .rew-lbl{ font-size:10px; color:var(--muted); }
-
-.task-check{
-  width:28px; height:28px; border-radius:50%;
-  background:var(--green);
-  display:flex; align-items:center; justify-content:center;
-  font-size:14px; flex-shrink:0;
-}
-
-/* daily reset badge */
-.daily-badge{
-  font-size:10px; background:rgba(124,58,237,0.2);
-  border:1px solid rgba(124,58,237,0.4);
-  color:var(--purple2); border-radius:6px;
-  padding:1px 6px; display:inline-block; margin-top:3px;
-}
-
-/* ====== UPGRADES ====== */
-.upgrades-grid{
-  padding:0 16px;
-  display:grid; grid-template-columns:1fr 1fr;
-  gap:10px;
-}
-.upgrade-card{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:14px;
-  cursor:pointer;
-  transition:all 0.2s;
-  position:relative;
-  overflow:hidden;
-}
-.upgrade-card::before{
-  content:'';
-  position:absolute; top:0; left:0;
-  width:70px; height:70px;
-  background:radial-gradient(circle, rgba(124,58,237,0.07) 0%, transparent 70%);
-  pointer-events:none;
-}
-.upgrade-card:active{ transform:scale(0.97); }
-.upgrade-card.maxed{ opacity:0.45; cursor:default; }
-.upgrade-card.can-buy{ border-color:rgba(168,85,247,0.45); box-shadow:0 0 16px rgba(124,58,237,0.15); }
-
-.upg-icon{ font-size:30px; margin-bottom:8px; }
-.upg-name{ font-size:13px; font-weight:700; margin-bottom:4px; }
-.upg-desc{ font-size:10px; color:var(--muted); margin-bottom:10px; line-height:1.4; }
-.upg-footer{ display:flex; align-items:center; justify-content:space-between; }
-.upg-level{
-  font-size:10px; color:var(--muted);
-  background:rgba(255,255,255,0.05);
-  padding:3px 8px; border-radius:20px;
-}
-.upg-cost{ font-size:13px; font-weight:800; color:var(--gold2); }
-
-/* ====== LEADERBOARD ====== */
-.lb-list{ padding:0 16px; display:flex; flex-direction:column; gap:8px; }
-.lb-item{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:12px 14px;
-  display:flex; align-items:center; gap:12px;
-}
-.lb-item.me{ border-color:rgba(168,85,247,0.45); background:rgba(124,58,237,0.07); }
-.lb-rank{ font-size:18px; font-weight:900; width:30px; text-align:center; flex-shrink:0; }
-.lb-rank.gold{ color:#ffd700; }
-.lb-rank.silver{ color:#c0c0c0; }
-.lb-rank.bronze{ color:#cd7f32; }
-.lb-av{
-  width:38px; height:38px; border-radius:10px;
-  background:linear-gradient(135deg,#1e1040,#2d1b69);
-  display:flex; align-items:center; justify-content:center;
-  font-size:18px; flex-shrink:0;
-}
-.lb-info{ flex:1; }
-.lb-info h4{ font-size:13px; font-weight:700; }
-.lb-info p{ font-size:10px; color:var(--muted); }
-.lb-score{ font-size:14px; font-weight:800; color:var(--gold2); }
-
-/* ====== TOAST ====== */
-@keyframes fadeUp{ from{opacity:0;transform:translateX(-50%) translateY(10px)} to{opacity:1;transform:translateX(-50%) translateY(0)} }
-
-/* ====== SCROLL ====== */
-.screen{ overflow-y:auto; }
-::-webkit-scrollbar{ width:3px; }
-::-webkit-scrollbar-track{ background:transparent; }
-::-webkit-scrollbar-thumb{ background:var(--border); border-radius:99px; }
+:root{--bg:#0a0612;--card:#130d24;--border:#2a1d4a;--purple:#7c3aed;--purple2:#a855f7;--gold:#f59e0b;--gold2:#fcd34d;--green:#10b981;--red:#ef4444;--text:#ede9fe;--muted:#6d5a8a;--tab-h:68px;--glow:rgba(124,58,237,0.4);--glow-g:rgba(245,158,11,0.4);}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;max-width:430px;margin:0 auto;overflow-x:hidden;user-select:none;}
+body::before{content:'';position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse at 50% -10%,rgba(124,58,237,0.18) 0%,transparent 55%),radial-gradient(1.5px 1.5px at 15% 20%,rgba(255,255,255,0.2) 0%,transparent 100%),radial-gradient(1px 1px at 80% 15%,rgba(255,255,255,0.15) 0%,transparent 100%),radial-gradient(1px 1px at 60% 75%,rgba(255,255,255,0.1) 0%,transparent 100%);pointer-events:none;}
+#splash{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;}
+.splash-logo{width:110px;height:110px;border-radius:28px;background:linear-gradient(135deg,#7c3aed,#a855f7);display:flex;align-items:center;justify-content:center;font-size:56px;box-shadow:0 0 60px rgba(124,58,237,0.6);animation:glow 1.5s ease infinite;}
+@keyframes glow{0%,100%{box-shadow:0 0 40px rgba(124,58,237,0.5)}50%{box-shadow:0 0 80px rgba(124,58,237,0.9)}}
+.splash-title{font-size:36px;font-weight:900;letter-spacing:4px;color:var(--gold2);}
+.splash-sub{font-size:13px;color:var(--muted);}
+.splash-bar-wrap{width:180px;height:4px;background:rgba(255,255,255,0.08);border-radius:99px;overflow:hidden;}
+.splash-bar{height:100%;background:linear-gradient(90deg,var(--purple),var(--gold2));border-radius:99px;width:0%;}
+.screen{display:none;flex-direction:column;min-height:calc(100vh - var(--tab-h));padding-bottom:calc(var(--tab-h) + 8px);position:relative;z-index:1;overflow-y:auto;}
+.screen.active{display:flex;}
+::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px;}
+.topbar{padding:12px 16px 8px;display:flex;align-items:center;justify-content:space-between;}
+.user-info{display:flex;align-items:center;gap:10px;}
+.avatar{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#7c3aed,#a855f7);display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 4px 16px rgba(124,58,237,0.5);border:1px solid rgba(168,85,247,0.4);position:relative;}
+.streak-badge{position:absolute;top:-6px;right:-6px;background:var(--gold);color:#000;font-size:9px;font-weight:900;padding:2px 5px;border-radius:99px;border:1.5px solid var(--bg);}
+.user-name{font-size:15px;font-weight:800;}
+.user-level{font-size:11px;color:var(--purple2);font-weight:600;}
+.balance-top{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.25);border-radius:14px;padding:7px 14px;text-align:left;}
+.balance-top .val{font-size:17px;font-weight:900;color:var(--gold2);}
+.balance-top .lbl{font-size:10px;color:var(--muted);}
+.info-bar{margin:0 16px 8px;border-radius:12px;padding:8px 14px;display:flex;align-items:center;justify-content:space-between;}
+.players-bar{background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.2);}
+.airdrop-bar{background:linear-gradient(135deg,rgba(245,158,11,0.08),rgba(124,58,237,0.08));border:1px solid rgba(245,158,11,0.2);cursor:pointer;}
+.p-left{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);}
+.p-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:blink 1.5s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.p-count{font-size:14px;font-weight:800;color:var(--purple2);}
+.ad-left{font-size:12px;color:var(--gold);font-weight:700;}
+.ad-left small{font-size:10px;color:var(--muted);font-weight:400;display:block;}
+.ad-timer{font-size:13px;font-weight:900;color:var(--gold2);}
+.level-bar-wrap{padding:0 16px 8px;}
+.level-info{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:5px;}
+.level-info span:first-child{color:var(--purple2);font-weight:700;}
+.progress-track{height:6px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden;}
+.progress-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--purple),var(--purple2),var(--gold));transition:width 0.4s ease;box-shadow:0 0 10px var(--glow);}
+.stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:0 16px 8px;}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center;}
+.stat-card .s-val{font-size:15px;font-weight:800;color:var(--gold2);}
+.stat-card .s-lbl{font-size:10px;color:var(--muted);margin-top:2px;}
+.streak-strip{margin:0 16px 10px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;}
+.streak-days{display:flex;gap:5px;}
+.streak-day{width:28px;height:28px;border-radius:7px;background:rgba(255,255,255,0.05);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;}
+.streak-day.done{background:rgba(245,158,11,0.2);border-color:var(--gold);}
+.streak-day.today{background:rgba(124,58,237,0.3);border-color:var(--purple2);animation:glow 1.5s infinite;}
+.si-val{font-size:15px;font-weight:900;color:var(--gold2);}
+.si-lbl{font-size:10px;color:var(--muted);}
+.coin-area{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:6px 0 16px;}
+.energy-bar-wrap{width:82%;}
+.energy-info{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:5px;}
+.energy-track{height:8px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden;}
+.energy-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--purple),var(--purple2));transition:width 0.3s ease;box-shadow:0 0 8px var(--glow);}
+.coin-btn-wrap{position:relative;}
+.coin-btn{width:200px;height:200px;border-radius:50%;border:none;cursor:pointer;position:relative;background:radial-gradient(circle at 38% 32%,#c084fc 0%,#7c3aed 40%,#4c1d95 80%,#2e1065 100%);box-shadow:0 0 0 6px rgba(124,58,237,0.12),0 0 0 16px rgba(124,58,237,0.06),0 0 50px rgba(124,58,237,0.5),inset 0 -10px 24px rgba(0,0,0,0.35);transition:transform 0.08s ease;display:flex;align-items:center;justify-content:center;font-size:72px;-webkit-user-select:none;}
+.coin-btn::before{content:'';position:absolute;inset:-4px;border-radius:50%;background:conic-gradient(from 0deg,transparent 0%,rgba(245,158,11,0.6) 20%,transparent 40%,rgba(245,158,11,0.3) 60%,transparent 80%,rgba(245,158,11,0.6) 100%);animation:spin 6s linear infinite;z-index:-1;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.coin-btn:active{transform:scale(0.92);}
+.coin-btn .inner-text{position:absolute;font-size:12px;font-weight:900;color:rgba(255,255,255,0.35);letter-spacing:3px;bottom:42px;width:100%;text-align:center;}
+.tap-hint{font-size:13px;color:var(--muted);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.float-num{position:fixed;font-size:24px;font-weight:900;color:var(--gold2);pointer-events:none;z-index:999;text-shadow:0 0 14px var(--glow-g);animation:floatUp 0.9s ease forwards;}
+@keyframes floatUp{0%{opacity:1;transform:translateY(0) scale(1.1)}100%{opacity:0;transform:translateY(-90px) scale(0.6)}}
+.ripple{position:absolute;border-radius:50%;background:rgba(216,180,254,0.25);pointer-events:none;animation:rippleOut 0.55s ease forwards;}
+@keyframes rippleOut{0%{transform:scale(0);opacity:1}100%{transform:scale(3.5);opacity:0}}
+.tabs{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;height:var(--tab-h);background:rgba(13,9,28,0.95);border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(5,1fr);z-index:100;backdrop-filter:blur(24px);}
+.tab-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:none;background:transparent;color:var(--muted);cursor:pointer;font-family:'Cairo',sans-serif;font-size:10px;transition:color 0.2s;position:relative;}
+.tab-btn .icon{font-size:20px;}
+.tab-btn.active{color:var(--purple2);}
+.tab-btn.active::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:32px;height:2px;background:linear-gradient(90deg,var(--purple),var(--purple2));border-radius:0 0 4px 4px;}
+.screen-title{padding:14px 16px 8px;font-size:20px;font-weight:900;}
+.screen-title span{color:var(--purple2);}
+.tasks-list{padding:0 16px;display:flex;flex-direction:column;gap:10px;}
+.task-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:14px;transition:border-color 0.2s;}
+.task-card.done{opacity:0.45;}
+.task-card:not(.done){cursor:pointer;}
+.task-card:not(.done):active{border-color:var(--purple2);}
+.task-card.timed{border-color:rgba(239,68,68,0.3);}
+.task-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.task-info{flex:1;}
+.task-info h3{font-size:14px;font-weight:700;}
+.task-info p{font-size:11px;color:var(--muted);margin-top:2px;}
+.task-reward{text-align:left;flex-shrink:0;}
+.task-reward .rv{font-size:14px;font-weight:800;color:var(--gold2);}
+.task-reward .rl{font-size:10px;color:var(--muted);}
+.task-check{width:28px;height:28px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.badge{font-size:10px;border-radius:6px;padding:1px 6px;display:inline-block;margin-top:3px;}
+.badge-daily{background:rgba(124,58,237,0.2);border:1px solid rgba(124,58,237,0.4);color:var(--purple2);}
+.badge-timed{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:var(--red);}
+.upgrades-grid{padding:0 16px;display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.upgrade-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden;}
+.upgrade-card:active{transform:scale(0.97);}
+.upgrade-card.maxed{opacity:0.45;cursor:default;}
+.upgrade-card.can-buy{border-color:rgba(168,85,247,0.45);box-shadow:0 0 16px rgba(124,58,237,0.15);}
+.upg-icon{font-size:30px;margin-bottom:8px;}
+.upg-name{font-size:13px;font-weight:700;margin-bottom:4px;}
+.upg-desc{font-size:10px;color:var(--muted);margin-bottom:10px;line-height:1.4;}
+.upg-footer{display:flex;align-items:center;justify-content:space-between;}
+.upg-level{font-size:10px;color:var(--muted);background:rgba(255,255,255,0.05);padding:3px 8px;border-radius:20px;}
+.upg-cost{font-size:13px;font-weight:800;color:var(--gold2);}
+.lb-section-title{padding:6px 16px;font-size:12px;color:var(--muted);font-weight:700;}
+.lb-list{padding:0 16px;display:flex;flex-direction:column;gap:8px;}
+.lb-item{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;}
+.lb-item.me{border-color:rgba(168,85,247,0.45);background:rgba(124,58,237,0.07);}
+.lb-rank{font-size:18px;font-weight:900;width:30px;text-align:center;flex-shrink:0;}
+.lb-rank.gold{color:#ffd700;}.lb-rank.silver{color:#c0c0c0;}.lb-rank.bronze{color:#cd7f32;}
+.lb-av{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#1e1040,#2d1b69);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.lb-info{flex:1;}
+.lb-info h4{font-size:13px;font-weight:700;}
+.lb-info p{font-size:10px;color:var(--muted);}
+.lb-score{font-size:14px;font-weight:800;color:var(--gold2);}
+.league-card{margin:0 16px 12px;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px;display:flex;align-items:center;gap:14px;}
+.league-icon{font-size:36px;}
+.league-info{flex:1;}
+.league-info h3{font-size:15px;font-weight:800;}
+.league-info p{font-size:11px;color:var(--muted);margin-top:2px;}
+.lp-track{height:5px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden;margin-top:8px;}
+.lp-fill{height:100%;border-radius:99px;transition:width 0.4s ease;}
+.airdrop-screen{padding:16px;}
+.ad-hero{background:linear-gradient(135deg,rgba(124,58,237,0.15),rgba(245,158,11,0.1));border:1px solid rgba(245,158,11,0.2);border-radius:20px;padding:24px 20px;text-align:center;margin-bottom:16px;}
+.ad-hero .ahi{font-size:52px;margin-bottom:10px;}
+.ad-hero h2{font-size:22px;font-weight:900;color:var(--gold2);margin-bottom:6px;}
+.ad-hero p{font-size:12px;color:var(--muted);line-height:1.6;}
+.cd-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:16px 0;}
+.cd-block{background:rgba(124,58,237,0.1);border:1px solid rgba(124,58,237,0.2);border-radius:12px;padding:10px 6px;text-align:center;}
+.cd-val{font-size:22px;font-weight:900;color:var(--purple2);}
+.cd-lbl{font-size:10px;color:var(--muted);}
+.ad-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.ad-stat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center;}
+.as-val{font-size:18px;font-weight:900;color:var(--gold2);}
+.as-lbl{font-size:11px;color:var(--muted);margin-top:3px;}
+.ad-info{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;}
+.ad-info h3{font-size:14px;font-weight:800;margin-bottom:10px;color:var(--purple2);}
+.ai-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;}
+.ai-row:last-child{border:none;}
+.ai-row span:last-child{color:var(--gold2);font-weight:700;}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal-box{background:#150e28;border:1px solid var(--border);border-radius:24px 24px 0 0;padding:24px 20px 40px;width:100%;max-width:430px;transform:translateY(100%);transition:transform 0.3s ease;}
+.modal-overlay.open .modal-box{transform:translateY(0);}
+.modal-box h2{font-size:18px;font-weight:900;margin-bottom:6px;}
+.modal-box p{font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.6;}
+.modal-btn{width:100%;padding:14px;border-radius:14px;border:none;font-family:'Cairo',sans-serif;font-size:15px;font-weight:800;cursor:pointer;margin-bottom:10px;}
+.modal-btn.primary{background:linear-gradient(135deg,var(--purple),var(--purple2));color:#fff;}
+.modal-btn.secondary{background:rgba(255,255,255,0.05);color:var(--muted);}
+@keyframes fadeUp{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 </style>
 </head>
 <body>
 
-<!-- ========= HOME ========= -->
-<div class="screen active" id="screen-home">
+<div id="splash">
+  <div class="splash-logo">⚡</div>
+  <div class="splash-title">ZWIN</div>
+  <div class="splash-sub">اكسب $ZWIN مع كل نقرة</div>
+  <div class="splash-bar-wrap"><div class="splash-bar" id="splashBar"></div></div>
+</div>
 
+<div class="screen active" id="screen-home">
   <div class="topbar">
     <div class="user-info">
-      <div class="avatar">⚡</div>
-      <div>
-        <div class="user-name" id="userName">يونس</div>
-        <div class="user-level" id="userLevelName">✦ مبتدئ</div>
-      </div>
+      <div class="avatar">⚡<div class="streak-badge" id="streakBadge">🔥0</div></div>
+      <div><div class="user-name" id="userName">يونس</div><div class="user-level" id="userLevelName">✦ مبتدئ</div></div>
     </div>
     <div class="balance-top">
       <div class="val" id="balanceTop">0 <small style="font-size:10px;color:var(--muted)">$ZWIN</small></div>
       <div class="lbl">رصيدك الكلي</div>
     </div>
   </div>
-
+  <div class="info-bar players-bar">
+    <div class="p-left"><div class="p-dot"></div><span>لاعبون نشطون</span></div>
+    <div class="p-count" id="playersCount">12,847</div>
+  </div>
+  <div class="info-bar airdrop-bar" onclick="switchTab('airdrop',document.querySelector('[data-tab=airdrop]'))">
+    <div class="ad-left">🎁 Airdrop $ZWIN قادم!<small>انقر لمعرفة التفاصيل</small></div>
+    <div class="ad-timer" id="adTimerSmall">--:--:--</div>
+  </div>
   <div class="level-bar-wrap">
-    <div class="level-info">
-      <span id="levelLabel">المستوى 1</span>
-      <span id="levelProgress">0 / 1,000</span>
-    </div>
-    <div class="progress-track">
-      <div class="progress-fill" id="progressFill" style="width:0%"></div>
-    </div>
+    <div class="level-info"><span id="levelLabel">المستوى 1</span><span id="levelProgress">0 / 1,000</span></div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
   </div>
-
   <div class="stats-row">
-    <div class="stat-card">
-      <div class="s-val" id="statPerTap">1</div>
-      <div class="s-lbl">⚡ لكل نقرة</div>
-    </div>
-    <div class="stat-card">
-      <div class="s-val" id="statPerHour">0</div>
-      <div class="s-lbl">🌙 في الساعة</div>
-    </div>
-    <div class="stat-card">
-      <div class="s-val" id="statTaps">0</div>
-      <div class="s-lbl">👆 نقرات</div>
-    </div>
+    <div class="stat-card"><div class="s-val" id="statPerTap">1</div><div class="s-lbl">⚡ لكل نقرة</div></div>
+    <div class="stat-card"><div class="s-val" id="statPerHour">0</div><div class="s-lbl">🌙 في الساعة</div></div>
+    <div class="stat-card"><div class="s-val" id="statTaps">0</div><div class="s-lbl">👆 نقرات</div></div>
   </div>
-
+  <div class="streak-strip">
+    <div class="streak-days" id="streakDays"></div>
+    <div><div class="si-val" id="streakCount">🔥 0 أيام</div><div class="si-lbl">سلسلة يومية</div></div>
+  </div>
   <div class="coin-area">
-
     <div class="energy-bar-wrap">
-      <div class="energy-info">
-        <span>⚡ الطاقة</span>
-        <span id="energyText">500 / 500</span>
-      </div>
-      <div class="energy-track">
-        <div class="energy-fill" id="energyFill" style="width:100%"></div>
-      </div>
+      <div class="energy-info"><span>⚡ الطاقة</span><span id="energyText">500 / 500</span></div>
+      <div class="energy-track"><div class="energy-fill" id="energyFill" style="width:100%"></div></div>
     </div>
-
     <div class="coin-btn-wrap">
-      <button class="coin-btn" id="coinBtn"
-        ontouchstart="handleTap(event)"
-        onmousedown="handleTap(event)">
-        ⚡
-        <span class="inner-text">ZWIN</span>
+      <button class="coin-btn" id="coinBtn" ontouchstart="handleTap(event)" onmousedown="handleTap(event)">
+        ⚡<span class="inner-text">ZWIN</span>
       </button>
     </div>
-
     <div class="tap-hint">انقر واكسب $ZWIN ✦</div>
   </div>
-
 </div>
 
-<!-- ========= TASKS ========= -->
 <div class="screen" id="screen-tasks">
   <div class="screen-title">المهام <span>✦</span></div>
   <div class="tasks-list" id="tasksList"></div>
 </div>
 
-<!-- ========= UPGRADES ========= -->
 <div class="screen" id="screen-upgrades">
   <div class="screen-title">الترقيات <span>⚡</span></div>
   <div class="upgrades-grid" id="upgradesGrid"></div>
 </div>
 
-<!-- ========= LEADERBOARD ========= -->
 <div class="screen" id="screen-lb">
-  <div class="screen-title">المتصدرون <span>🏆</span></div>
+  <div class="screen-title">الدوري <span>🏆</span></div>
+  <div class="league-card">
+    <div class="league-icon" id="leagueIcon">🥉</div>
+    <div class="league-info">
+      <h3 id="leagueName">البرونزي</h3><p id="leagueDesc">تنافس للوصول إلى الفضي</p>
+      <div class="lp-track"><div class="lp-fill" id="lpFill" style="width:0%;background:linear-gradient(90deg,#cd7f32,#f59e0b)"></div></div>
+    </div>
+  </div>
+  <div class="lb-section-title">🌍 المتصدرون</div>
   <div class="lb-list" id="lbList"></div>
 </div>
 
-<!-- ========= TABS ========= -->
+<div class="screen" id="screen-airdrop">
+  <div class="airdrop-screen">
+    <div class="ad-hero">
+      <div class="ahi">🎁</div>
+      <h2>Airdrop $ZWIN قادم!</h2>
+      <p>كل نقطة تجمعها الآن ستتحول إلى $ZWIN حقيقية عند الإطلاق. كلما جمعت أكثر = كلما ربحت أكثر. كن من الأوائل! 🚀</p>
+    </div>
+    <div class="cd-grid">
+      <div class="cd-block"><div class="cd-val" id="cdDays">00</div><div class="cd-lbl">يوم</div></div>
+      <div class="cd-block"><div class="cd-val" id="cdHours">00</div><div class="cd-lbl">ساعة</div></div>
+      <div class="cd-block"><div class="cd-val" id="cdMins">00</div><div class="cd-lbl">دقيقة</div></div>
+      <div class="cd-block"><div class="cd-val" id="cdSecs">00</div><div class="cd-lbl">ثانية</div></div>
+    </div>
+    <div class="ad-stats">
+      <div class="ad-stat"><div class="as-val" id="myZwin">0</div><div class="as-lbl">نقاطي الحالية</div></div>
+      <div class="ad-stat"><div class="as-val" id="playersTotal">12,847</div><div class="as-lbl">إجمالي اللاعبين</div></div>
+    </div>
+    <div class="ad-info">
+      <h3>📋 تفاصيل التوزيع</h3>
+      <div class="ai-row"><span>نسبة التحويل</span><span>1,000 نقطة = 1 $ZWIN</span></div>
+      <div class="ai-row"><span>الحد الأدنى للسحب</span><span>100 $ZWIN</span></div>
+      <div class="ai-row"><span>الشبكة</span><span>TON Blockchain</span></div>
+      <div class="ai-row"><span>إجمالي التوزيع</span><span>10,000,000 $ZWIN</span></div>
+      <div class="ai-row"><span>تاريخ الإطلاق</span><span>قريباً 🚀</span></div>
+    </div>
+  </div>
+</div>
+
 <div class="tabs">
-  <button class="tab-btn active" onclick="switchTab('home',this)">
-    <span class="icon">🏠</span>الرئيسية
-  </button>
-  <button class="tab-btn" onclick="switchTab('tasks',this)">
-    <span class="icon">📋</span>المهام
-  </button>
-  <button class="tab-btn" onclick="switchTab('upgrades',this)">
-    <span class="icon">⚡</span>الترقيات
-  </button>
-  <button class="tab-btn" onclick="switchTab('lb',this)">
-    <span class="icon">🏆</span>المتصدرون
-  </button>
+  <button class="tab-btn active" onclick="switchTab('home',this)"><span class="icon">🏠</span>الرئيسية</button>
+  <button class="tab-btn" onclick="switchTab('tasks',this)"><span class="icon">📋</span>المهام</button>
+  <button class="tab-btn" onclick="switchTab('upgrades',this)"><span class="icon">⚡</span>الترقيات</button>
+  <button class="tab-btn" onclick="switchTab('lb',this)"><span class="icon">🏆</span>الدوري</button>
+  <button class="tab-btn" data-tab="airdrop" onclick="switchTab('airdrop',this)"><span class="icon">🎁</span>Airdrop</button>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box">
+    <h2 id="modalTitle"></h2><p id="modalBody"></p>
+    <button class="modal-btn primary" id="modalPrimary"></button>
+    <button class="modal-btn secondary" onclick="closeModal()">لاحقاً</button>
+  </div>
 </div>
 
 <script>
-// ========= STATE =========
-const DEFAULT_TASKS = [
-  { id:1, icon:'📱', bg:'#1a0d3a', name:'تابع قناة ZWIN', desc:'اشترك في قناة تيليغرام', reward:500, done:false, type:'social' },
-  { id:2, icon:'👥', bg:'#2d1060', name:'ادعُ صديقاً', desc:'شارك رابط الإحالة', reward:1000, done:false, type:'social' },
-  { id:3, icon:'⚡', bg:'#1a1000', name:'انقر 100 مرة', desc:'انقر الزر الرئيسي 100 مرة', reward:200, done:false, target:100, type:'taps', daily:true },
-  { id:4, icon:'💰', bg:'#1a0d00', name:'اكسب 500 ZWIN', desc:'اجمع 500 نقطة', reward:300, done:false, target:500, type:'balance', daily:true },
-  { id:5, icon:'🔋', bg:'#0d1a2a', name:'استنفد طاقتك', desc:'استخدم كل الطاقة المتاحة', reward:150, done:false, type:'energy', daily:true },
+// SOUND
+const AC=window.AudioContext||window.webkitAudioContext;let ac=null;
+function tap_sound(){try{if(!ac)ac=new AC();const o=ac.createOscillator(),g=ac.createGain();o.connect(g);g.connect(ac.destination);o.frequency.setValueAtTime(880,ac.currentTime);o.frequency.exponentialRampToValueAtTime(440,ac.currentTime+0.05);g.gain.setValueAtTime(0.12,ac.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+0.1);o.start();o.stop(ac.currentTime+0.1);}catch(e){}}
+
+const AIRDROP_DATE=new Date('2025-10-01T00:00:00Z');
+
+const DTASKS=[
+  {id:1,icon:'📱',bg:'#1a0d3a',name:'تابع قناة ZWIN',desc:'اشترك في القناة الرسمية',reward:500,done:false,type:'social',url:'https://t.me/ZwinCoin'},
+  {id:2,icon:'👥',bg:'#2d1060',name:'ادعُ صديقاً',desc:'شارك رابط اللعبة مع صديق',reward:1000,done:false,type:'referral'},
+  {id:3,icon:'⚡',bg:'#1a1000',name:'انقر 100 مرة',desc:'انقر الزر 100 مرة',reward:200,done:false,target:100,type:'taps',daily:true},
+  {id:4,icon:'💰',bg:'#1a0d00',name:'اكسب 500 ZWIN',desc:'اجمع 500 نقطة',reward:300,done:false,target:500,type:'balance',daily:true},
+  {id:5,icon:'🔋',bg:'#0d1a2a',name:'استنفد طاقتك',desc:'استخدم كل الطاقة',reward:150,done:false,type:'energy',daily:true},
+  {id:6,icon:'⏰',bg:'#1a0a0a',name:'تحدي الساعة!',desc:'انقر 50 مرة في أقل من ساعة',reward:800,done:false,target:50,type:'timed',daily:true,timed:true,duration:3600},
 ];
 
-const state = {
-  balance: 0,
-  totalEarned: 0,
-  taps: 0,
-  energy: 500,
-  maxEnergy: 500,
-  perTap: 1,
-  perHour: 0,
-  energyRegen: 3,
-  dailyBonusUnlocked: false,
-  lastDailyBonus: 0,
-  lastDailyReset: 0,
-  lastSaved: Date.now(),
-  tasks: JSON.parse(JSON.stringify(DEFAULT_TASKS)),
-  upgrades: [
-    { id:1, icon:'⚡', name:'نقر قوي', desc:'زد كسبك لكل نقرة', perTapBonus:1, costBase:100, level:0, maxLevel:10 },
-    { id:2, icon:'🔋', name:'طاقة موسعة', desc:'زد سعة طاقتك', energyBonus:100, costBase:200, level:0, maxLevel:5 },
-    { id:3, icon:'⚡', name:'شحن سريع', desc:'تعافى الطاقة أسرع', regenBonus:1, costBase:300, level:0, maxLevel:5 },
-    { id:4, icon:'🌙', name:'تعدين ليلي', desc:'اكسب تلقائياً كل ساعة', hourlyBonus:50, costBase:500, level:0, maxLevel:10 },
-    { id:5, icon:'💎', name:'مضاعف ZWIN', desc:'ضاعف كسبك ×2', multiplier:true, costBase:2000, level:0, maxLevel:3 },
-    { id:6, icon:'✦', name:'نجمة الأطلس', desc:'مكافأة يومية +2000 ZWIN', costBase:1500, level:0, maxLevel:1, dailyBonus:true },
+const S={
+  balance:0,totalEarned:0,taps:0,energy:500,maxEnergy:500,
+  perTap:1,perHour:0,energyRegen:3,
+  dailyBonusUnlocked:false,lastDailyBonus:0,lastDailyReset:0,lastSaved:Date.now(),
+  streak:0,lastStreakDay:0,timedStart:0,timedTaps:0,
+  tasks:JSON.parse(JSON.stringify(DTASKS)),
+  upgrades:[
+    {id:1,icon:'⚡',name:'نقر قوي',desc:'زد كسبك لكل نقرة',perTapBonus:1,costBase:100,level:0,maxLevel:10},
+    {id:2,icon:'🔋',name:'طاقة موسعة',desc:'زد سعة طاقتك',energyBonus:100,costBase:200,level:0,maxLevel:5},
+    {id:3,icon:'⚡',name:'شحن سريع',desc:'تعافى الطاقة أسرع',regenBonus:1,costBase:300,level:0,maxLevel:5},
+    {id:4,icon:'🌙',name:'تعدين ليلي',desc:'اكسب تلقائياً كل ساعة',hourlyBonus:50,costBase:500,level:0,maxLevel:10},
+    {id:5,icon:'💎',name:'مضاعف ZWIN',desc:'ضاعف كسبك ×2',multiplier:true,costBase:2000,level:0,maxLevel:3},
+    {id:6,icon:'✦',name:'نجمة الأطلس',desc:'مكافأة يومية +2000 ZWIN',costBase:1500,level:0,maxLevel:1,dailyBonus:true},
   ],
-  leaderboard: [
-    { name:'محمد الريفي',    score:128400, flag:'🇲🇦', me:false },
-    { name:'فاطمة الزهراء', score:95200,  flag:'🇲🇦', me:false },
-    { name:'عبد الرحمان',   score:74500,  flag:'🇲🇦', me:false },
-    { name:'خديجة أمين',   score:61300,  flag:'🇲🇦', me:false },
-    { name:'يونس',          score:0,      flag:'🇲🇦', me:true  },
-    { name:'حمزة الإدريسي', score:45800,  flag:'🇲🇦', me:false },
-    { name:'سلمى بنعلي',   score:38200,  flag:'🇲🇦', me:false },
-    { name:'يوسف المراكشي', score:29100,  flag:'🇲🇦', me:false },
+  lb:[
+    {name:'محمد الريفي',score:128400,flag:'🇲🇦',me:false},{name:'فاطمة الزهراء',score:95200,flag:'🇲🇦',me:false},
+    {name:'عبد الرحمان',score:74500,flag:'🇲🇦',me:false},{name:'خديجة أمين',score:61300,flag:'🇲🇦',me:false},
+    {name:'يونس',score:0,flag:'🇲🇦',me:true},{name:'حمزة الإدريسي',score:45800,flag:'🇲🇦',me:false},
+    {name:'سلمى بنعلي',score:38200,flag:'🇲🇦',me:false},{name:'يوسف المراكشي',score:29100,flag:'🇲🇦',me:false},
   ],
 };
 
-const LEVELS = [
-  { name:'مبتدئ',   req:0 },
-  { name:'متعلم',   req:1000 },
-  { name:'ناشط',    req:5000 },
-  { name:'محترف',   req:15000 },
-  { name:'خبير',    req:40000 },
-  { name:'بطل',     req:100000 },
-  { name:'أسطورة',  req:250000 },
-];
+const LVL=[{name:'مبتدئ',req:0},{name:'متعلم',req:1000},{name:'ناشط',req:5000},{name:'محترف',req:15000},{name:'خبير',req:40000},{name:'بطل',req:100000},{name:'أسطورة',req:250000}];
+const LGS=[{name:'البرونزي',icon:'🥉',c:'#cd7f32',max:5000},{name:'الفضي',icon:'🥈',c:'#c0c0c0',max:20000},{name:'الذهبي',icon:'🥇',c:'#ffd700',max:60000},{name:'الماسي',icon:'💎',c:'#a855f7',max:150000},{name:'الأسطوري',icon:'👑',c:'#f59e0b',max:Infinity}];
 
-// ========= LOAD =========
-const saved = localStorage.getItem('zwinState');
-if (saved) {
-  try {
-    const s = JSON.parse(saved);
-    Object.assign(state, s);
-    const elapsed = (Date.now() - (state.lastSaved || Date.now())) / 1000;
-    if (state.perHour > 0) {
-      const earned = Math.floor((state.perHour / 3600) * elapsed);
-      state.balance += earned;
-      state.totalEarned += earned;
-    }
-    const regenAmt = Math.floor(elapsed * state.energyRegen);
-    state.energy = Math.min(state.maxEnergy, (state.energy || 0) + regenAmt);
-  } catch(e) {}
+const sv=localStorage.getItem('zwin4');
+if(sv){try{const d=JSON.parse(sv);Object.assign(S,d);const el=(Date.now()-(S.lastSaved||Date.now()))/1000;if(S.perHour>0){const e=Math.floor((S.perHour/3600)*el);S.balance+=e;S.totalEarned+=e;}S.energy=Math.min(S.maxEnergy,(S.energy||0)+Math.floor(el*S.energyRegen));}catch(e){}}
+
+function save(){S.lastSaved=Date.now();localStorage.setItem('zwin4',JSON.stringify(S));}
+function fmt(n){if(n>=1e6)return(n/1e6).toFixed(1)+'M';if(n>=1000)return(n/1000).toFixed(1)+'K';return Math.floor(n).toLocaleString('ar-MA');}
+function getLvl(){let i=0;for(let j=LVL.length-1;j>=0;j--){if(S.totalEarned>=LVL[j].req){i=j;break;}}return i;}
+function getLg(){for(let i=LGS.length-1;i>=0;i--){if(S.totalEarned<=LGS[i].max)return i===0?0:i;}return LGS.length-1;}
+
+// STREAK
+function checkStreak(){
+  const now=new Date(),today=new Date(now.getFullYear(),now.getMonth(),now.getDate()).getTime();
+  const last=S.lastStreakDay||0;
+  if(last===today)return;
+  S.streak=last===today-86400000?(S.streak||0)+1:1;
+  S.lastStreakDay=today;
+  const bonus=S.streak*100;S.balance+=bonus;S.totalEarned+=bonus;
+  setTimeout(()=>toast('🔥 سلسلة '+S.streak+' أيام! +'+fmt(bonus)+' $ZWIN'),2000);
+  save();
+}
+function renderStreak(){
+  const el=document.getElementById('streakDays');el.innerHTML='';
+  for(let i=0;i<7;i++){const d=document.createElement('div');const isT=i===Math.min((S.streak||0)-1,6),isD=i<Math.min((S.streak||0),7)&&!isT;d.className='streak-day'+(isD?' done':'')+(isT?' today':'');d.textContent=isD||isT?'⚡':(i+1);el.appendChild(d);}
+  document.getElementById('streakCount').textContent='🔥 '+(S.streak||0)+' أيام';
+  document.getElementById('streakBadge').textContent='🔥'+(S.streak||0);
 }
 
-function save() {
-  state.lastSaved = Date.now();
-  localStorage.setItem('zwinState', JSON.stringify(state));
+// PLAYERS
+let fpc=12847+Math.floor(Math.random()*500);
+setInterval(()=>{fpc+=Math.floor(Math.random()*3);const f=fpc.toLocaleString('ar-MA');document.getElementById('playersCount').textContent=f;document.getElementById('playersTotal').textContent=f;},5000);
+
+// COUNTDOWN
+function updateCD(){
+  const diff=AIRDROP_DATE.getTime()-Date.now();
+  const pad=n=>String(n).padStart(2,'0');
+  if(diff<=0){['cdDays','cdHours','cdMins','cdSecs'].forEach(id=>document.getElementById(id).textContent='00');document.getElementById('adTimerSmall').textContent='قريباً!';return;}
+  const d=Math.floor(diff/86400000),h=Math.floor((diff%86400000)/3600000),m=Math.floor((diff%3600000)/60000),s=Math.floor((diff%60000)/1000);
+  document.getElementById('cdDays').textContent=pad(d);document.getElementById('cdHours').textContent=pad(h);document.getElementById('cdMins').textContent=pad(m);document.getElementById('cdSecs').textContent=pad(s);
+  document.getElementById('adTimerSmall').textContent=pad(d)+'ي:'+pad(h)+'س:'+pad(m)+'د';
+}
+setInterval(updateCD,1000);updateCD();
+
+// UI
+function updateUI(){
+  document.getElementById('balanceTop').innerHTML=fmt(S.balance)+' <small style="font-size:10px;color:var(--muted)">$ZWIN</small>';
+  document.getElementById('statPerTap').textContent=S.perTap;document.getElementById('statPerHour').textContent=fmt(S.perHour);document.getElementById('statTaps').textContent=fmt(S.taps);
+  const ep=(S.energy/S.maxEnergy)*100;document.getElementById('energyFill').style.width=ep+'%';document.getElementById('energyText').textContent=Math.floor(S.energy)+' / '+S.maxEnergy;
+  const li=getLvl(),lv=LVL[li],nv=LVL[li+1];
+  document.getElementById('userLevelName').textContent='✦ '+lv.name;document.getElementById('levelLabel').textContent='المستوى '+(li+1);
+  if(nv){document.getElementById('progressFill').style.width=Math.min(100,((S.totalEarned-lv.req)/(nv.req-lv.req))*100)+'%';document.getElementById('levelProgress').textContent=fmt(S.totalEarned-lv.req)+' / '+fmt(nv.req-lv.req);}
+  else{document.getElementById('progressFill').style.width='100%';document.getElementById('levelProgress').textContent='أقصى مستوى! 🏆';}
+  const lgi=getLg(),lg=LGS[lgi],nlg=LGS[lgi+1];
+  document.getElementById('leagueIcon').textContent=lg.icon;document.getElementById('leagueName').textContent=lg.name;document.getElementById('leagueDesc').textContent=nlg?'تنافس للوصول إلى '+nlg.name:'أعلى دوري! 👑';
+  const lp=nlg?Math.min(100,((S.totalEarned-(lgi>0?LGS[lgi-1].max:0))/(lg.max-(lgi>0?LGS[lgi-1].max:0)))*100):100;
+  document.getElementById('lpFill').style.width=lp+'%';document.getElementById('lpFill').style.background=`linear-gradient(90deg,${lg.c},${lg.c}aa)`;
+  document.getElementById('myZwin').textContent=fmt(S.totalEarned);
+  const me=S.lb.find(x=>x.me);if(me)me.score=Math.floor(S.totalEarned);S.lb.sort((a,b)=>b.score-a.score);
+  renderStreak();
 }
 
-// ========= HELPERS =========
-function fmt(n) {
-  if (n >= 1000000) return (n/1000000).toFixed(1)+'M';
-  if (n >= 1000)    return (n/1000).toFixed(1)+'K';
-  return Math.floor(n).toLocaleString('ar-MA');
-}
-
-function getCurrentLevel() {
-  let idx = 0;
-  for (let i = LEVELS.length - 1; i >= 0; i--) {
-    if (state.totalEarned >= LEVELS[i].req) { idx = i; break; }
-  }
-  return idx;
-}
-
-// ========= UI UPDATE =========
-function updateUI() {
-  document.getElementById('balanceTop').innerHTML =
-    fmt(state.balance) + ' <small style="font-size:10px;color:var(--muted)">$ZWIN</small>';
-
-  document.getElementById('statPerTap').textContent  = state.perTap;
-  document.getElementById('statPerHour').textContent = fmt(state.perHour);
-  document.getElementById('statTaps').textContent    = fmt(state.taps);
-
-  const ep = (state.energy / state.maxEnergy) * 100;
-  document.getElementById('energyFill').style.width = ep + '%';
-  document.getElementById('energyText').textContent  =
-    Math.floor(state.energy) + ' / ' + state.maxEnergy;
-
-  const lvlIdx = getCurrentLevel();
-  const lvl    = LEVELS[lvlIdx];
-  const nextLvl= LEVELS[lvlIdx + 1];
-  document.getElementById('userLevelName').textContent = '✦ ' + lvl.name;
-  document.getElementById('levelLabel').textContent    = 'المستوى ' + (lvlIdx + 1);
-
-  if (nextLvl) {
-    const prog = ((state.totalEarned - lvl.req) / (nextLvl.req - lvl.req)) * 100;
-    document.getElementById('progressFill').style.width = Math.min(100, prog) + '%';
-    document.getElementById('levelProgress').textContent =
-      fmt(state.totalEarned - lvl.req) + ' / ' + fmt(nextLvl.req - lvl.req);
-  } else {
-    document.getElementById('progressFill').style.width = '100%';
-    document.getElementById('levelProgress').textContent = 'أقصى مستوى! 🏆';
-  }
-
-  const me = state.leaderboard.find(x => x.me);
-  if (me) me.score = Math.floor(state.totalEarned);
-  state.leaderboard.sort((a, b) => b.score - a.score);
-}
-
-// ========= TAP =========
-function handleTap(e) {
+// TAP
+function handleTap(e){
   e.preventDefault();
-  if (state.energy < 1) { showToast('⚡ انتظر شحن الطاقة!'); return; }
-
-  const touches  = e.touches || [e];
-  const tapsNow  = Math.min(touches.length, Math.floor(state.energy));
-
-  for (let i = 0; i < tapsNow; i++) {
-    const t      = touches[i] || e;
-    const earned = state.perTap;
-    state.balance     += earned;
-    state.totalEarned += earned;
-    state.taps++;
-    state.energy = Math.max(0, state.energy - 1);
-
-    const x = t.clientX || (window.innerWidth  / 2);
-    const y = t.clientY || (window.innerHeight / 2);
-    spawnFloat(x, y, '+' + earned);
-    spawnRipple(e);
+  if(S.energy<1){toast('⚡ انتظر شحن الطاقة!');return;}
+  const ts=e.touches||[e],tn=Math.min(ts.length,Math.floor(S.energy));
+  for(let i=0;i<tn;i++){
+    const t=ts[i]||e;S.balance+=S.perTap;S.totalEarned+=S.perTap;S.taps++;S.energy=Math.max(0,S.energy-1);
+    const tt=S.tasks.find(x=>x.type==='timed'&&!x.done);if(tt&&S.timedStart>0)S.timedTaps=(S.timedTaps||0)+1;
+    spawnFloat(t.clientX||(window.innerWidth/2),t.clientY||(window.innerHeight/2),'+'+S.perTap);spawnRipple(e);
   }
-
-  checkTaskProgress();
-  updateUI();
-  save();
+  tap_sound();checkTaskProg();updateUI();save();
 }
+function spawnFloat(x,y,t){const el=document.createElement('div');el.className='float-num';el.textContent=t;el.style.left=(x-20)+'px';el.style.top=(y-30)+'px';document.body.appendChild(el);setTimeout(()=>el.remove(),900);}
+function spawnRipple(e){const b=document.getElementById('coinBtn'),r_=b.getBoundingClientRect(),r=document.createElement('div');r.className='ripple';const sz=60;r.style.width=r.style.height=sz+'px';r.style.left=(r_.width/2-sz/2)+'px';r.style.top=(r_.height/2-sz/2)+'px';b.appendChild(r);setTimeout(()=>r.remove(),550);}
 
-function spawnFloat(x, y, text) {
-  const el = document.createElement('div');
-  el.className   = 'float-num';
-  el.textContent = text;
-  el.style.left  = (x - 20) + 'px';
-  el.style.top   = (y - 30) + 'px';
-  document.body.appendChild(el);
-  setTimeout(() => el.remove(), 900);
+setInterval(()=>{if(S.energy<S.maxEnergy){S.energy=Math.min(S.maxEnergy,S.energy+S.energyRegen);updateUI();}},1000);
+setInterval(()=>{if(S.perHour>0){S.balance+=S.perHour/3600;S.totalEarned+=S.perHour/3600;updateUI();}},1000);
+setInterval(()=>{S.lb.forEach(p=>{if(p.me)return;p.score+=Math.floor(Math.random()*800+100);});renderLB();save();},60000);
+
+// DAILY BONUS
+function claimDailyBonus(silent){
+  if(!S.dailyBonusUnlocked)return;
+  const now=Date.now(),last=S.lastDailyBonus||0;
+  if(now-last<86400000){if(!silent){const r=86400000-(now-last);toast('⏳ الموعد القادم بعد '+Math.floor(r/3600000)+'س '+Math.floor((r%3600000)/60000)+'د');}return;}
+  S.balance+=2000;S.totalEarned+=2000;S.lastDailyBonus=now;
+  toast('✦ مكافأة يومية! +2,000 $ZWIN');spawnFloat(window.innerWidth/2,window.innerHeight/3,'+2,000');updateUI();save();
 }
+function checkDailyBonusOnLoad(){if(!S.dailyBonusUnlocked)return;if(Date.now()-(S.lastDailyBonus||0)>=86400000)setTimeout(()=>toast('✦ مكافأتك اليومية جاهزة!'),2000);}
 
-function spawnRipple(e) {
-  const btn  = document.getElementById('coinBtn');
-  const rect = btn.getBoundingClientRect();
-  const r    = document.createElement('div');
-  r.className = 'ripple';
-  const size  = 60;
-  r.style.width  = r.style.height = size + 'px';
-  r.style.left   = (rect.width  / 2 - size / 2) + 'px';
-  r.style.top    = (rect.height / 2 - size / 2) + 'px';
-  btn.appendChild(r);
-  setTimeout(() => r.remove(), 550);
-}
-
-// ========= ENERGY REGEN =========
-setInterval(() => {
-  if (state.energy < state.maxEnergy) {
-    state.energy = Math.min(state.maxEnergy, state.energy + state.energyRegen);
-    updateUI();
-  }
-}, 1000);
-
-// ========= PASSIVE INCOME =========
-setInterval(() => {
-  if (state.perHour > 0) {
-    const earned = state.perHour / 3600;
-    state.balance     += earned;
-    state.totalEarned += earned;
-    updateUI();
-  }
-}, 1000);
-
-// ========= DAILY BONUS =========
-const DAILY_BONUS_AMOUNT   = 2000;
-const DAILY_BONUS_COOLDOWN = 24 * 60 * 60 * 1000;
-
-function claimDailyBonus(silent) {
-  if (!state.dailyBonusUnlocked) return;
-  const now  = Date.now();
-  const last = state.lastDailyBonus || 0;
-  if (now - last < DAILY_BONUS_COOLDOWN) {
-    if (!silent) {
-      const remaining = DAILY_BONUS_COOLDOWN - (now - last);
-      const h = Math.floor(remaining / 3600000);
-      const m = Math.floor((remaining % 3600000) / 60000);
-      showToast('⏳ الموعد القادم بعد ' + h + 'س ' + m + 'د');
-    }
-    return;
-  }
-  state.balance     += DAILY_BONUS_AMOUNT;
-  state.totalEarned += DAILY_BONUS_AMOUNT;
-  state.lastDailyBonus = now;
-  showToast('✦ مكافأة يومية! +' + fmt(DAILY_BONUS_AMOUNT) + ' $ZWIN');
-  spawnFloat(window.innerWidth / 2, window.innerHeight / 3, '+' + fmt(DAILY_BONUS_AMOUNT));
-  updateUI();
-  save();
-}
-
-function checkDailyBonusOnLoad() {
-  if (!state.dailyBonusUnlocked) return;
-  if (Date.now() - (state.lastDailyBonus || 0) >= DAILY_BONUS_COOLDOWN) {
-    setTimeout(() => showToast('✦ مكافأتك اليومية جاهزة!'), 1500);
+function checkDailyReset(){
+  const now=Date.now();
+  if(now-(S.lastDailyReset||0)>=86400000){
+    S.tasks.forEach(t=>{if([3,4,5,6].includes(t.id)){t.done=false;t.visited=false;}});
+    S.timedStart=0;S.timedTaps=0;S.lastDailyReset=now;
   }
 }
 
-// ========= DAILY TASK RESET =========
-const DAILY_TASK_IDS = [3, 4, 5];
-function checkDailyTaskReset() {
-  const now = Date.now();
-  if (now - (state.lastDailyReset || 0) >= 24 * 60 * 60 * 1000) {
-    state.tasks.forEach(t => { if (DAILY_TASK_IDS.includes(t.id)) t.done = false; });
-    state.lastDailyReset = now;
-  }
+// TIMED TASK
+function startTimed(task){
+  if(S.timedStart>0){const rem=task.duration-(Date.now()-S.timedStart)/1000;if(rem>0)toast('⏰ '+Math.floor(rem/60)+'د '+Math.floor(rem%60)+'ث — نقراتك: '+(S.timedTaps||0)+'/'+task.target);return;}
+  S.timedStart=Date.now();S.timedTaps=0;toast('⏰ بدأت! انقر '+task.target+' مرة خلال ساعة!');save();
 }
+setInterval(()=>{
+  const task=S.tasks.find(t=>t.type==='timed'&&!t.done);if(!task||S.timedStart===0)return;
+  if((Date.now()-S.timedStart)/1000>task.duration){S.timedStart=0;S.timedTaps=0;toast('⏰ انتهى الوقت! حاول غداً');save();renderTasks();return;}
+  if((S.timedTaps||0)>=task.target)claimTask(task.id);
+},2000);
 
-// ========= TASKS =========
-function renderTasks() {
-  const list = document.getElementById('tasksList');
-  list.innerHTML = '';
-  state.tasks.forEach(t => {
-    const div = document.createElement('div');
-    div.className = 'task-card' + (t.done ? ' done' : '');
-    div.innerHTML = `
-      <div class="task-icon" style="background:${t.bg}">${t.icon}</div>
-      <div class="task-info">
-        <h3>${t.name}</h3>
-        <p>${t.desc}</p>
-        ${t.daily ? '<span class="daily-badge">يومي</span>' : ''}
-      </div>
-      <div class="task-reward">
-        <div class="rew-val">+${fmt(t.reward)}</div>
-        <div class="rew-lbl">$ZWIN</div>
-      </div>
-      ${t.done
-        ? '<div class="task-check">✓</div>'
-        : '<div style="color:var(--purple2);font-size:20px">›</div>'}
-    `;
-    if (!t.done) div.onclick = () => claimTask(t.id);
-    list.appendChild(div);
+// TASKS
+function renderTasks(){
+  const list=document.getElementById('tasksList');list.innerHTML='';
+  const tt=S.tasks.find(t=>t.type==='timed'&&!t.done);
+  let tr='';if(tt&&S.timedStart>0){const rem=tt.duration-(Date.now()-S.timedStart)/1000;if(rem>0)tr=Math.floor(rem/60)+'د '+Math.floor(rem%60)+'ث';}
+  S.tasks.forEach(t=>{
+    const div=document.createElement('div');div.className='task-card'+(t.done?' done':'')+(t.timed?' timed':'');
+    let badge='';if(t.daily)badge+='<span class="badge badge-daily">يومي</span>';
+    if(t.timed){const tp=S.timedStart>0?(S.timedTaps||0)+'/'+t.target:'';badge+=' <span class="badge badge-timed">⏰ '+(tr||'اضغط للبدء')+' '+tp+'</span>';}
+    div.innerHTML=`<div class="task-icon" style="background:${t.bg}">${t.icon}</div>
+      <div class="task-info"><h3>${t.name}</h3><p>${t.desc}</p>${badge}</div>
+      <div class="task-reward"><div class="rv">+${fmt(t.reward)}</div><div class="rl">$ZWIN</div></div>
+      ${t.done?'<div class="task-check">✓</div>':'<div style="color:var(--purple2);font-size:20px">›</div>'}`;
+    if(!t.done)div.onclick=()=>claimTask(t.id);list.appendChild(div);
   });
 }
 
-function claimTask(id) {
-  const t = state.tasks.find(x => x.id === id);
-  if (!t || t.done) return;
-
-  if (t.type === 'taps'    && state.taps < t.target) {
-    showToast('انقر ' + (t.target - state.taps) + ' مرة إضافية!'); return;
-  }
-  if (t.type === 'balance' && state.totalEarned < t.target) {
-    showToast('اكسب ' + fmt(t.target - state.totalEarned) + ' $ZWIN إضافية!'); return;
-  }
-
-  t.done = true;
-  state.balance     += t.reward;
-  state.totalEarned += t.reward;
-  showToast('+' + fmt(t.reward) + ' $ZWIN 🎉');
-  spawnFloat(window.innerWidth / 2, window.innerHeight / 2, '+' + fmt(t.reward));
-  renderTasks();
-  updateUI();
-  save();
+function claimTask(id){
+  const t=S.tasks.find(x=>x.id===id);if(!t||t.done)return;
+  if(t.type==='social'&&t.url){window.open(t.url,'_blank');toast('⏳ انضم للقناة ثم اضغط مجدداً');if(!t.visited){t.visited=true;save();return;}}
+  if(t.type==='referral'){const url='https://t.me/ZwinApp_bot/zwin',tx='⚡ العب ZWIN واكسب $ZWIN يومياً! 🚀';window.open('https://t.me/share/url?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(tx),'_blank');if(!t.visited){t.visited=true;save();toast('شارك الرابط للحصول على المكافأة!');return;}}
+  if(t.type==='timed'&&(S.timedTaps||0)<t.target){startTimed(t);return;}
+  if(t.type==='taps'&&S.taps<t.target){toast('انقر '+(t.target-S.taps)+' مرة إضافية!');return;}
+  if(t.type==='balance'&&S.totalEarned<t.target){toast('اكسب '+fmt(t.target-S.totalEarned)+' $ZWIN إضافية!');return;}
+  t.done=true;S.balance+=t.reward;S.totalEarned+=t.reward;
+  toast('+'+fmt(t.reward)+' $ZWIN 🎉');spawnFloat(window.innerWidth/2,window.innerHeight/2,'+'+fmt(t.reward));
+  renderTasks();updateUI();save();
 }
+function checkTaskProg(){S.tasks.forEach(t=>{if(t.done)return;if(t.type==='energy'&&S.energy===0)claimTask(t.id);});}
 
-function checkTaskProgress() {
-  state.tasks.forEach(t => {
-    if (t.done) return;
-    if (t.type === 'energy' && state.energy === 0) claimTask(t.id);
-  });
-}
-
-// ========= UPGRADES =========
-function getUpgradeCost(u) {
-  return Math.floor(u.costBase * Math.pow(1.8, u.level));
-}
-
-function renderUpgrades() {
-  const grid = document.getElementById('upgradesGrid');
-  grid.innerHTML = '';
-  state.upgrades.forEach(u => {
-    const cost  = getUpgradeCost(u);
-    const isMax = u.level >= u.maxLevel;
-    const canBuy= !isMax && state.balance >= cost;
-    const div   = document.createElement('div');
-    div.className = 'upgrade-card' + (isMax ? ' maxed' : '') + (canBuy ? ' can-buy' : '');
-
-    let levelLabel, costLabel, clickable = !isMax;
-    if (isMax && u.dailyBonus) {
-      levelLabel = '✦ مفعّل';
-      costLabel  = '<span style="color:var(--green);font-size:11px">اضغط للمطالبة</span>';
-      clickable  = true;
-    } else if (isMax) {
-      levelLabel = 'MAX';
-      costLabel  = '—';
-    } else {
-      levelLabel = 'Lv.' + u.level;
-      costLabel  = fmt(cost) + ' $ZWIN';
-    }
-
-    div.innerHTML = `
-      <div class="upg-icon">${u.icon}</div>
-      <div class="upg-name">${u.name}</div>
-      <div class="upg-desc">${u.desc}</div>
-      <div class="upg-footer">
-        <span class="upg-level">${levelLabel}</span>
-        <span class="upg-cost">${costLabel}</span>
-      </div>
-    `;
-    if (clickable) {
-      div.onclick = isMax && u.dailyBonus
-        ? () => claimDailyBonus(false)
-        : () => buyUpgrade(u.id);
-    }
+// UPGRADES
+function getUCost(u){return Math.floor(u.costBase*Math.pow(1.8,u.level));}
+function renderUpgrades(){
+  const grid=document.getElementById('upgradesGrid');grid.innerHTML='';
+  S.upgrades.forEach(u=>{
+    const cost=getUCost(u),isMax=u.level>=u.maxLevel,canBuy=!isMax&&S.balance>=cost;
+    const div=document.createElement('div');div.className='upgrade-card'+(isMax?' maxed':'')+(canBuy?' can-buy':'');
+    let ll,cl,ck=!isMax;
+    if(isMax&&u.dailyBonus){ll='✦ مفعّل';cl='<span style="color:var(--green);font-size:11px">اضغط للمطالبة</span>';ck=true;}
+    else if(isMax){ll='MAX';cl='—';}else{ll='Lv.'+u.level;cl=fmt(cost)+' $ZWIN';}
+    div.innerHTML=`<div class="upg-icon">${u.icon}</div><div class="upg-name">${u.name}</div><div class="upg-desc">${u.desc}</div><div class="upg-footer"><span class="upg-level">${ll}</span><span class="upg-cost">${cl}</span></div>`;
+    if(ck)div.onclick=isMax&&u.dailyBonus?()=>claimDailyBonus(false):()=>buyUpg(u.id);
     grid.appendChild(div);
   });
 }
-
-function buyUpgrade(id) {
-  const u = state.upgrades.find(x => x.id === id);
-  if (!u || u.level >= u.maxLevel) return;
-  const cost = getUpgradeCost(u);
-  if (state.balance < cost) { showToast('رصيدك غير كافٍ!'); return; }
-
-  state.balance -= cost;
-  u.level++;
-
-  if (u.perTapBonus) state.perTap += u.perTapBonus;
-  if (u.energyBonus) { state.maxEnergy += u.energyBonus; state.energy = Math.min(state.energy + u.energyBonus, state.maxEnergy); }
-  if (u.regenBonus)  state.energyRegen += u.regenBonus;
-  if (u.hourlyBonus) state.perHour += u.hourlyBonus;
-  if (u.multiplier)  state.perTap = Math.ceil(state.perTap * 2);
-  if (u.dailyBonus)  { state.dailyBonusUnlocked = true; claimDailyBonus(true); }
-
-  showToast('تمت الترقية! ⚡');
-  renderUpgrades();
-  updateUI();
-  save();
+function buyUpg(id){
+  const u=S.upgrades.find(x=>x.id===id);if(!u||u.level>=u.maxLevel)return;
+  const cost=getUCost(u);if(S.balance<cost){toast('رصيدك غير كافٍ!');return;}
+  S.balance-=cost;u.level++;
+  if(u.perTapBonus)S.perTap+=u.perTapBonus;if(u.energyBonus){S.maxEnergy+=u.energyBonus;S.energy=Math.min(S.energy+u.energyBonus,S.maxEnergy);}
+  if(u.regenBonus)S.energyRegen+=u.regenBonus;if(u.hourlyBonus)S.perHour+=u.hourlyBonus;if(u.multiplier)S.perTap=Math.ceil(S.perTap*2);
+  if(u.dailyBonus){S.dailyBonusUnlocked=true;claimDailyBonus(true);}
+  toast('تمت الترقية! ⚡');renderUpgrades();updateUI();save();
 }
 
-// ========= LEADERBOARD =========
-function renderLeaderboard() {
-  const list   = document.getElementById('lbList');
-  list.innerHTML = '';
-  const sorted = [...state.leaderboard].sort((a, b) => b.score - a.score);
-  sorted.forEach((p, i) => {
-    const rankClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
-    const rankIcon  = i === 0 ? '🥇'   : i === 1 ? '🥈'     : i === 2 ? '🥉'    : (i + 1);
-    const div = document.createElement('div');
-    div.className = 'lb-item' + (p.me ? ' me' : '');
-    div.innerHTML = `
-      <div class="lb-rank ${rankClass}">${rankIcon}</div>
-      <div class="lb-av">${p.flag}</div>
-      <div class="lb-info">
-        <h4>${p.name}${p.me ? ' (أنت)' : ''}</h4>
-        <p>المستوى ${getCurrentLevel() + 1}</p>
-      </div>
-      <div class="lb-score">${fmt(p.score)}</div>
-    `;
+// LEADERBOARD
+function renderLB(){
+  const list=document.getElementById('lbList');list.innerHTML='';
+  [...S.lb].sort((a,b)=>b.score-a.score).forEach((p,i)=>{
+    const rc=i===0?'gold':i===1?'silver':i===2?'bronze':'',ri=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1),lg=LGS[getLg()];
+    const div=document.createElement('div');div.className='lb-item'+(p.me?' me':'');
+    div.innerHTML=`<div class="lb-rank ${rc}">${ri}</div><div class="lb-av">${p.flag}</div><div class="lb-info"><h4>${p.name}${p.me?' (أنت)':''}</h4><p>${lg.icon} ${lg.name}</p></div><div class="lb-score">${fmt(p.score)}</div>`;
     list.appendChild(div);
   });
 }
 
-// Leaderboard NPC simulation
-setInterval(() => {
-  state.leaderboard.forEach(p => {
-    if (p.me) return;
-    p.score += Math.floor(Math.random() * 800 + 100);
-  });
-  renderLeaderboard();
-  save();
-}, 60000);
-
-// ========= TABS =========
-function switchTab(name, btn) {
-  document.querySelectorAll('.screen').forEach(s  => s.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('screen-' + name).classList.add('active');
-  btn.classList.add('active');
-  if (name === 'tasks')    renderTasks();
-  if (name === 'upgrades') renderUpgrades();
-  if (name === 'lb')       renderLeaderboard();
+// TABS
+function switchTab(name,btn){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  if(btn)btn.classList.add('active');
+  if(name==='tasks')renderTasks();if(name==='upgrades')renderUpgrades();if(name==='lb')renderLB();
 }
 
-// ========= TOAST =========
-function showToast(msg) {
-  const existing = document.querySelector('.toast');
-  if (existing) existing.remove();
-  const t = document.createElement('div');
-  t.className   = 'toast';
-  t.textContent = msg;
-  t.style.cssText = `
-    position:fixed; bottom:88px; left:50%; transform:translateX(-50%);
-    background:linear-gradient(135deg,rgba(124,58,237,0.95),rgba(168,85,247,0.95));
-    color:#fff; font-weight:700;
-    padding:10px 22px; border-radius:14px; font-size:14px;
-    z-index:9999; font-family:'Cairo',sans-serif;
-    animation: fadeUp 0.3s ease;
-    box-shadow:0 4px 20px rgba(124,58,237,0.4);
-    border:1px solid rgba(216,180,254,0.2);
-    white-space:nowrap;
-  `;
-  document.body.appendChild(t);
-  setTimeout(() => t.remove(), 2200);
+// MODAL
+function showModal(title,body,btnText,btnAction){
+  document.getElementById('modalTitle').textContent=title;document.getElementById('modalBody').textContent=body;
+  document.getElementById('modalPrimary').textContent=btnText;document.getElementById('modalPrimary').onclick=()=>{btnAction();closeModal();};
+  document.getElementById('modalOverlay').classList.add('open');
 }
+function closeModal(){document.getElementById('modalOverlay').classList.remove('open');}
+document.getElementById('modalOverlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
 
-// ========= TELEGRAM SDK =========
-const tg = window.Telegram?.WebApp;
-if (tg) {
-  // Initialize
-  tg.ready();
-  tg.expand(); // فتح اللعبة بملء الشاشة
+// TOAST
+function toast(msg){const ex=document.querySelector('.zt');if(ex)ex.remove();const t=document.createElement('div');t.className='zt';t.textContent=msg;t.style.cssText='position:fixed;bottom:88px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,rgba(124,58,237,0.95),rgba(168,85,247,0.95));color:#fff;font-weight:700;padding:10px 22px;border-radius:14px;font-size:14px;z-index:9999;font-family:Cairo,sans-serif;animation:fadeUp 0.3s ease;box-shadow:0 4px 20px rgba(124,58,237,0.4);white-space:nowrap;';document.body.appendChild(t);setTimeout(()=>t.remove(),2200);}
 
-  // جلب اسم المستخدم من تيليغرام
-  const tgUser = tg.initDataUnsafe?.user;
-  if (tgUser) {
-    const displayName = tgUser.first_name || tgUser.username || 'يونس';
-    document.getElementById('userName').textContent = displayName;
-    // حفظ Telegram ID في الـ state
-    state.telegramId   = tgUser.id;
-    state.telegramName = displayName;
-  }
+// TELEGRAM
+const tg=window.Telegram?.WebApp;
+if(tg){tg.ready();tg.expand();const u=tg.initDataUnsafe?.user;if(u){const n=u.first_name||u.username||'يونس';document.getElementById('userName').textContent=n;S.telegramId=u.id;S.telegramName=n;}tg.setHeaderColor('#0a0612');tg.setBackgroundColor('#0a0612');tg.BackButton.onClick(()=>tg.close());}
 
-  // ألوان تيليغرام
-  tg.setHeaderColor('#0a0612');
-  tg.setBackgroundColor('#0a0612');
+// SPLASH
+function showSplash(){const bar=document.getElementById('splashBar');let p=0;const iv=setInterval(()=>{p+=2;bar.style.width=p+'%';if(p>=100){clearInterval(iv);const s=document.getElementById('splash');s.style.transition='opacity 0.4s';s.style.opacity='0';setTimeout(()=>s.style.display='none',400);}},30);}
 
-  // زر الإغلاق الاحترافي
-  tg.BackButton.onClick(() => tg.close());
-}
-
-// ========= INIT =========
-checkDailyTaskReset();
-checkDailyBonusOnLoad();
-updateUI();
+// INIT
+checkDailyReset();checkDailyBonusOnLoad();checkStreak();updateUI();showSplash();
+if(!sv){setTimeout(()=>{showModal('⚡ مرحباً في ZWIN!','ابدأ النقر الآن واجمع $ZWIN! كل نقطة ستتحول إلى عملة حقيقية عند إطلاق الـ Airdrop. كن من الأوائل! 🚀','🎮 ابدأ اللعب!',()=>{});},2500);}
 </script>
 </body>
 </html>
