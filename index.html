@@ -154,6 +154,54 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:radial-gradi
 .modal-btn.primary{background:linear-gradient(135deg,var(--purple),var(--purple2));color:#fff;}
 .modal-btn.secondary{background:rgba(255,255,255,0.05);color:var(--muted);}
 @keyframes fadeUp{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+/* ====== ADS STYLES ====== */
+.banner-ad{margin:0 16px 10px;background:linear-gradient(135deg,rgba(124,58,237,0.1),rgba(245,158,11,0.08));border:1px solid rgba(245,158,11,0.25);border-radius:14px;padding:10px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;position:relative;overflow:hidden;}
+.banner-ad::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.03),transparent);animation:shimmer 2.5s infinite;}
+@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.banner-ad-icon{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,#7c3aed,#a855f7);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.banner-ad-info{flex:1;}
+.banner-ad-info h4{font-size:12px;font-weight:800;color:var(--text);}
+.banner-ad-info p{font-size:10px;color:var(--muted);margin-top:1px;}
+.banner-ad-reward{display:flex;flex-direction:column;align-items:center;flex-shrink:0;}
+.banner-ad-reward .rw-v{font-size:13px;font-weight:900;color:var(--gold2);}
+.banner-ad-reward .rw-l{font-size:9px;color:var(--muted);}
+.ad-label{position:absolute;top:5px;left:5px;font-size:8px;background:rgba(255,255,255,0.08);color:var(--muted);padding:1px 5px;border-radius:4px;font-weight:600;}
+
+/* Rewarded Ad Modal */
+.ad-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:800;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s;}
+.ad-modal-overlay.open{opacity:1;pointer-events:all;}
+.ad-modal-box{background:#150e28;border:1px solid var(--border);border-radius:24px;padding:28px 22px;width:88%;max-width:360px;text-align:center;position:relative;}
+.ad-modal-close{position:absolute;top:12px;right:14px;font-size:18px;color:var(--muted);cursor:pointer;display:none;}
+.ad-modal-close.show{display:block;}
+.ad-mock-video{width:100%;height:160px;background:linear-gradient(135deg,#1a0d3a,#0d1a2a);border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;margin:14px 0;position:relative;overflow:hidden;border:1px solid var(--border);}
+.ad-mock-video::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.04) 50%,transparent 100%);animation:scanline 1.5s linear infinite;}
+@keyframes scanline{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.ad-progress-ring{width:56px;height:56px;position:relative;}
+.ad-progress-ring svg{transform:rotate(-90deg);}
+.ad-progress-ring .bg-circle{fill:none;stroke:rgba(255,255,255,0.08);stroke-width:4;}
+.ad-progress-ring .fg-circle{fill:none;stroke:var(--purple2);stroke-width:4;stroke-dasharray:138;stroke-dashoffset:138;transition:stroke-dashoffset 1s linear;stroke-linecap:round;}
+.ad-timer-num{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:18px;font-weight:900;color:var(--gold2);}
+.ad-mock-label{font-size:11px;color:var(--muted);font-weight:600;}
+.ad-reward-badge{background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.3);border-radius:10px;padding:8px 18px;display:inline-block;margin-bottom:14px;}
+.ad-reward-badge .arb-v{font-size:22px;font-weight:900;color:var(--gold2);}
+.ad-reward-badge .arb-l{font-size:10px;color:var(--muted);margin-top:2px;}
+.ad-claim-btn{width:100%;padding:13px;border-radius:14px;border:none;font-family:'Cairo',sans-serif;font-size:15px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#000;opacity:0.4;pointer-events:none;transition:all 0.3s;}
+.ad-claim-btn.ready{opacity:1;pointer-events:all;box-shadow:0 0 20px var(--glow-g);}
+
+/* Interstitial Ad */
+.interstitial-overlay{position:fixed;inset:0;background:#0a0612;z-index:900;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;opacity:0;pointer-events:none;transition:opacity 0.3s;}
+.interstitial-overlay.open{opacity:1;pointer-events:all;}
+.inter-skip{position:absolute;top:20px;right:16px;background:rgba(255,255,255,0.08);border:1px solid var(--border);border-radius:10px;padding:6px 14px;font-size:12px;color:var(--muted);cursor:pointer;font-family:'Cairo',sans-serif;display:none;}
+.inter-skip.show{display:block;}
+.inter-mock{width:90%;max-width:360px;height:240px;background:linear-gradient(135deg,#1a0d3a,#2d1060,#0d1a2a);border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;position:relative;overflow:hidden;border:1px solid rgba(124,58,237,0.3);}
+.inter-mock-icon{font-size:52px;}
+.inter-mock-title{font-size:16px;font-weight:800;color:var(--gold2);}
+.inter-mock-sub{font-size:11px;color:var(--muted);}
+.inter-counter{font-size:13px;color:var(--muted);}
+
+/* Tasks rewarded ad */
+.task-watch-btn{background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);border-radius:10px;padding:6px 12px;font-size:11px;font-weight:700;color:var(--gold);cursor:pointer;white-space:nowrap;flex-shrink:0;}
 </style>
 </head>
 <body>
@@ -183,6 +231,20 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:radial-gradi
   <div class="info-bar airdrop-bar" onclick="switchTab('airdrop',document.querySelector('[data-tab=airdrop]'))">
     <div class="ad-left">🎁 Airdrop $ZWIN قادم!<small>انقر لمعرفة التفاصيل</small></div>
     <div class="ad-timer" id="adTimerSmall">--:--:--</div>
+  </div>
+
+  <!-- Banner Ad -->
+  <div class="banner-ad" id="bannerAd" onclick="showRewardedAd()">
+    <span class="ad-label">إعلان</span>
+    <div class="banner-ad-icon" id="bannerAdIcon">🎮</div>
+    <div class="banner-ad-info">
+      <h4 id="bannerAdTitle">شاهد إعلاناً واكسب مكافأة!</h4>
+      <p id="bannerAdSub">احصل على $ZWIN مجاناً مقابل 5 ثواني</p>
+    </div>
+    <div class="banner-ad-reward">
+      <div class="rw-v" id="bannerAdReward">+150</div>
+      <div class="rw-l">$ZWIN</div>
+    </div>
   </div>
   <div class="level-bar-wrap">
     <div class="level-info"><span id="levelLabel">المستوى 1</span><span id="levelProgress">0 / 1,000</span></div>
@@ -260,6 +322,43 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:radial-gradi
       <div class="ai-row"><span>تاريخ الإطلاق</span><span>قريباً 🚀</span></div>
     </div>
   </div>
+</div>
+
+<!-- Rewarded Ad Modal -->
+<div class="ad-modal-overlay" id="rewardedAdOverlay">
+  <div class="ad-modal-box">
+    <span class="ad-modal-close" id="rewardedClose" onclick="closeRewardedAd()">&#10005;</span>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">إعلان ممول</div>
+    <h3 style="font-size:17px;font-weight:900;margin-bottom:4px;">شاهد واكسب!</h3>
+    <p style="font-size:11px;color:var(--muted);">شاهد الإعلان كاملاً للحصول على مكافأة $ZWIN</p>
+    <div class="ad-mock-video">
+      <div class="ad-progress-ring" id="adRing">
+        <svg width="56" height="56" viewBox="0 0 56 56">
+          <circle class="bg-circle" cx="28" cy="28" r="22"/>
+          <circle class="fg-circle" id="adRingCircle" cx="28" cy="28" r="22"/>
+        </svg>
+        <div class="ad-timer-num" id="adTimerCount">5</div>
+      </div>
+      <div class="ad-mock-label">&#128250; جاري تشغيل الإعلان...</div>
+    </div>
+    <div class="ad-reward-badge">
+      <div class="arb-v" id="rewardedAmount">+150 $ZWIN</div>
+      <div class="arb-l">مكافأة المشاهدة</div>
+    </div>
+    <button class="ad-claim-btn" id="adClaimBtn" onclick="claimRewardedAd()">&#8987; انتظر...</button>
+  </div>
+</div>
+
+<!-- Interstitial Ad -->
+<div class="interstitial-overlay" id="interstitialOverlay">
+  <button class="inter-skip" id="interSkipBtn" onclick="closeInterstitial()">تخطي &#10005;</button>
+  <div style="font-size:10px;color:var(--muted);">إعلان</div>
+  <div class="inter-mock">
+    <div class="inter-mock-icon">&#9889;</div>
+    <div class="inter-mock-title">ZWIN Premium</div>
+    <div class="inter-mock-sub">ضاعف أرباحك الآن!</div>
+  </div>
+  <div class="inter-counter" id="interCounter">يمكنك التخطي بعد 3 ثواني</div>
 </div>
 
 <div class="tabs">
@@ -523,6 +622,133 @@ function showSplash(){const bar=document.getElementById('splashBar');let p=0;con
 // INIT
 checkDailyReset();checkDailyBonusOnLoad();checkStreak();updateUI();showSplash();
 if(!sv){setTimeout(()=>{showModal('⚡ مرحباً في ZWIN!','ابدأ النقر الآن واجمع $ZWIN! كل نقطة ستتحول إلى عملة حقيقية عند إطلاق الـ Airdrop. كن من الأوائل! 🚀','🎮 ابدأ اللعب!',()=>{});},2500);}
+
+// ============================================================
+// AD SYSTEM
+// ============================================================
+
+const ADS_CONFIG = [
+  {icon:'🎮',title:'العب وتنافس الآن!',sub:'ألعاب مكافآت يومية',reward:150},
+  {icon:'💎',title:'اشترك في ZWIN Pro',sub:'ضاعف نقاطك x3',reward:200},
+  {icon:'🚀',title:'قريباً على الـ TON!',sub:'كن من الأوائل في الإطلاق',reward:175},
+  {icon:'🌙',title:'مكافآت ليلية مضاعفة',sub:'العب الآن واكسب أكثر',reward:125},
+  {icon:'⚡',title:'طاقة مجانية!',sub:'شاهد إعلاناً واحصل على +100 طاقة',reward:100},
+];
+
+// Rewarded Ad durations
+const AD_DURATION = 5; // seconds
+
+let adTimer = null;
+let adSecondsLeft = AD_DURATION;
+let currentAdReward = 150;
+let interTimer = null;
+let interSecondsLeft = 3;
+let lastInterstitialTime = 0;
+let tapsSinceLastAd = 0;
+
+// Rotate banner ad every 8 seconds
+let bannerAdIndex = 0;
+function rotateBannerAd(){
+  const ad = ADS_CONFIG[bannerAdIndex % ADS_CONFIG.length];
+  document.getElementById('bannerAdIcon').textContent = ad.icon;
+  document.getElementById('bannerAdTitle').textContent = ad.title;
+  document.getElementById('bannerAdSub').textContent = ad.sub;
+  document.getElementById('bannerAdReward').textContent = '+'+ad.reward;
+  currentAdReward = ad.reward;
+  bannerAdIndex++;
+}
+rotateBannerAd();
+setInterval(rotateBannerAd, 8000);
+
+// Show Rewarded Ad
+function showRewardedAd(){
+  const ad = ADS_CONFIG[Math.floor(Math.random()*ADS_CONFIG.length)];
+  currentAdReward = ad.reward;
+  adSecondsLeft = AD_DURATION;
+  document.getElementById('rewardedAmount').textContent = '+'+currentAdReward+' $ZWIN';
+  document.getElementById('adTimerCount').textContent = adSecondsLeft;
+  document.getElementById('adRingCircle').style.strokeDashoffset = '138';
+  document.getElementById('adClaimBtn').className = 'ad-claim-btn';
+  document.getElementById('adClaimBtn').textContent = '⏳ انتظر...';
+  document.getElementById('rewardedClose').className = 'ad-modal-close';
+  document.getElementById('rewardedAdOverlay').classList.add('open');
+  if(adTimer) clearInterval(adTimer);
+  adTimer = setInterval(()=>{
+    adSecondsLeft--;
+    document.getElementById('adTimerCount').textContent = adSecondsLeft;
+    const progress = ((AD_DURATION - adSecondsLeft) / AD_DURATION);
+    const offset = 138 - (138 * progress);
+    document.getElementById('adRingCircle').style.strokeDashoffset = offset;
+    if(adSecondsLeft <= 0){
+      clearInterval(adTimer);
+      document.getElementById('adClaimBtn').className = 'ad-claim-btn ready';
+      document.getElementById('adClaimBtn').textContent = '🎁 احصل على '+currentAdReward+' $ZWIN!';
+      document.getElementById('rewardedClose').className = 'ad-modal-close show';
+    }
+  }, 1000);
+}
+
+function claimRewardedAd(){
+  clearInterval(adTimer);
+  S.balance += currentAdReward;
+  S.totalEarned += currentAdReward;
+  document.getElementById('rewardedAdOverlay').classList.remove('open');
+  toast('+'+currentAdReward+' $ZWIN 🎉 شكراً على المشاهدة!');
+  spawnFloat(window.innerWidth/2, window.innerHeight/2, '+'+currentAdReward);
+  updateUI(); save();
+  // Rotate banner to next ad after claiming
+  rotateBannerAd();
+}
+
+function closeRewardedAd(){
+  clearInterval(adTimer);
+  document.getElementById('rewardedAdOverlay').classList.remove('open');
+}
+
+// Interstitial Ad (shows every 50 taps)
+function maybeShowInterstitial(){
+  tapsSinceLastAd++;
+  if(tapsSinceLastAd >= 50 && Date.now() - lastInterstitialTime > 60000){
+    tapsSinceLastAd = 0;
+    lastInterstitialTime = Date.now();
+    setTimeout(showInterstitial, 300);
+  }
+}
+
+function showInterstitial(){
+  const ad = ADS_CONFIG[Math.floor(Math.random()*ADS_CONFIG.length)];
+  interSecondsLeft = 3;
+  document.getElementById('interSkipBtn').className = 'inter-skip';
+  document.getElementById('interCounter').textContent = 'يمكنك التخطي بعد '+interSecondsLeft+' ثواني';
+  document.getElementById('interstitialOverlay').classList.add('open');
+  if(interTimer) clearInterval(interTimer);
+  interTimer = setInterval(()=>{
+    interSecondsLeft--;
+    if(interSecondsLeft <= 0){
+      clearInterval(interTimer);
+      document.getElementById('interSkipBtn').className = 'inter-skip show';
+      document.getElementById('interCounter').textContent = 'اضغط لإغلاق الإعلان';
+    } else {
+      document.getElementById('interCounter').textContent = 'يمكنك التخطي بعد '+interSecondsLeft+' ثواني';
+    }
+  }, 1000);
+}
+
+function closeInterstitial(){
+  clearInterval(interTimer);
+  document.getElementById('interstitialOverlay').classList.remove('open');
+}
+
+// Hook into tap handler to trigger interstitial
+const _origHandleTap = handleTap;
+window.handleTap = function(e){
+  _origHandleTap(e);
+  maybeShowInterstitial();
+};
+// Reassign button
+document.getElementById('coinBtn').ontouchstart = window.handleTap;
+document.getElementById('coinBtn').onmousedown = window.handleTap;
+
 </script>
 </body>
 </html>
