@@ -538,8 +538,48 @@ function renderTasks(){
 
 function claimTask(id){
   const t=S.tasks.find(x=>x.id===id);if(!t||t.done)return;
-  if(t.type==='social'&&t.url){window.open(t.url,'_blank');toast('⏳ انضم للقناة ثم اضغط مجدداً');if(!t.visited){t.visited=true;save();return;}}
-  if(t.type==='referral'){const url='https://t.me/ZwinApp_bot/zwin',tx='⚡ العب ZWIN واكسب $ZWIN يومياً! 🚀';window.open('https://t.me/share/url?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(tx),'_blank');if(!t.visited){t.visited=true;save();toast('شارك الرابط للحصول على المكافأة!');return;}}
+  if(t.type==='social'&&t.url){
+    if(!t.visited){
+      window.open(t.url,'_blank');
+      t.visited=true;t.visitedAt=Date.now();save();
+      toast('⏳ انضم للقناة ثم اضغط مجدداً للتحقق!');
+      return;
+    }
+    const waited=(Date.now()-(t.visitedAt||0))/1000;
+    if(waited<10){toast('⏳ انتظر '+(Math.ceil(10-waited))+' ثانية!');return;}
+    // التحقق الحقيقي عبر Telegram API
+    const tgUser=window.Telegram?.WebApp?.initDataUnsafe?.user;
+    if(tgUser?.id){
+      toast('🔍 جاري التحقق من انضمامك...');
+      fetch('/api/check-member?userId='+tgUser.id)
+        .then(r=>r.json())
+        .then(data=>{
+          if(data.member){
+            t.done=true;S.balance+=t.reward;S.totalEarned+=t.reward;
+            toast('+'+fmt(t.reward)+' $ZWIN 🎉 تم التحقق!');
+            spawnFloat(window.innerWidth/2,window.innerHeight/2,'+'+fmt(t.reward));
+            renderTasks();updateUI();save();
+          } else {
+            t.visited=false;save();
+            toast('❌ لم يتم اكتشاف انضمامك — انضم أولاً ثم حاول!');
+            renderTasks();
+          }
+        })
+        .catch(()=>toast('⚠️ خطأ في التحقق، حاول مجدداً'));
+      return;
+    }
+  }
+  if(t.type==='referral'){
+    const url='https://t.me/ZwinApp_bot/zwin',tx='⚡ العب ZWIN واكسب $ZWIN يومياً! 🚀';
+    if(!t.visited){
+      window.open('https://t.me/share/url?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(tx),'_blank');
+      t.visited=true;t.visitedAt=Date.now();save();
+      toast('📤 شارك الرابط — انتظر 30 ثانية ثم اضغط مجدداً!');
+      return;
+    }
+    const waited=(Date.now()-(t.visitedAt||0))/1000;
+    if(waited<30){toast('⏳ انتظر '+(Math.ceil(30-waited))+' ثانية إضافية ثم اضغط!');return;}
+  }
   if(t.type==='timed'&&(S.timedTaps||0)<t.target){startTimed(t);return;}
   if(t.type==='taps'&&S.taps<t.target){toast('انقر '+(t.target-S.taps)+' مرة إضافية!');return;}
   if(t.type==='balance'&&S.totalEarned<t.target){toast('اكسب '+fmt(t.target-S.totalEarned)+' $ZWIN إضافية!');return;}
