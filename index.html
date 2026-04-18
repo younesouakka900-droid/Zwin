@@ -6,8 +6,6 @@
 <title>ZWIN</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
-<!-- Adsterra Popunder -->
-<script src="https://pl29178103.profitablecpmratenetwork.com/4f/f5/91/4ff5917f571d48a5bf87bad5870e219f.js"></script>
 <style>
 :root{--bg:#0a0612;--card:#130d24;--border:#2a1d4a;--purple:#7c3aed;--purple2:#a855f7;--gold:#f59e0b;--gold2:#fcd34d;--green:#10b981;--red:#ef4444;--text:#ede9fe;--muted:#6d5a8a;--tab-h:68px;--glow:rgba(124,58,237,0.4);--glow-g:rgba(245,158,11,0.4);}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
@@ -191,19 +189,38 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:radial-gradi
 .ad-claim-btn{width:100%;padding:13px;border-radius:14px;border:none;font-family:'Cairo',sans-serif;font-size:15px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#000;opacity:0.4;pointer-events:none;transition:all 0.3s;}
 .ad-claim-btn.ready{opacity:1;pointer-events:all;box-shadow:0 0 20px var(--glow-g);}
 
-/* Interstitial Ad */
-.interstitial-overlay{position:fixed;inset:0;background:#0a0612;z-index:900;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;opacity:0;pointer-events:none;transition:opacity 0.3s;}
-.interstitial-overlay.open{opacity:1;pointer-events:all;}
-.inter-skip{position:absolute;top:20px;right:16px;background:rgba(255,255,255,0.08);border:1px solid var(--border);border-radius:10px;padding:6px 14px;font-size:12px;color:var(--muted);cursor:pointer;font-family:'Cairo',sans-serif;display:none;}
-.inter-skip.show{display:block;}
-.inter-mock{width:90%;max-width:360px;height:240px;background:linear-gradient(135deg,#1a0d3a,#2d1060,#0d1a2a);border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;position:relative;overflow:hidden;border:1px solid rgba(124,58,237,0.3);}
-.inter-mock-icon{font-size:52px;}
-.inter-mock-title{font-size:16px;font-weight:800;color:var(--gold2);}
-.inter-mock-sub{font-size:11px;color:var(--muted);}
-.inter-counter{font-size:13px;color:var(--muted);}
 
 /* Tasks rewarded ad */
 .task-watch-btn{background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);border-radius:10px;padding:6px 12px;font-size:11px;font-weight:700;color:var(--gold);cursor:pointer;white-space:nowrap;flex-shrink:0;}
+
+/* ====== WATCH & EARN SCREEN ====== */
+.watch-screen{padding:16px;}
+.watch-hero{background:linear-gradient(135deg,rgba(245,158,11,0.12),rgba(124,58,237,0.1));border:1px solid rgba(245,158,11,0.25);border-radius:20px;padding:20px;text-align:center;margin-bottom:16px;}
+.watch-hero-icon{font-size:44px;margin-bottom:8px;}
+.watch-hero h2{font-size:20px;font-weight:900;color:var(--gold2);margin-bottom:4px;}
+.watch-hero p{font-size:12px;color:var(--muted);line-height:1.5;}
+.watch-progress-wrap{margin:12px 0 0;}
+.watch-progress-label{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:5px;}
+.watch-progress-label span:first-child{color:var(--gold);font-weight:700;}
+.watch-progress-track{height:8px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden;}
+.watch-progress-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width 0.4s ease;box-shadow:0 0 10px var(--glow-g);}
+.watch-total-earned{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:12px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.wte-label{font-size:11px;color:var(--muted);}
+.wte-val{font-size:16px;font-weight:900;color:var(--gold2);}
+.watch-cards{display:flex;flex-direction:column;gap:10px;}
+.watch-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all 0.2s;}
+.watch-card:active{transform:scale(0.98);}
+.watch-card.available{border-color:rgba(245,158,11,0.35);box-shadow:0 0 16px rgba(245,158,11,0.08);}
+.watch-card.done{opacity:0.45;cursor:default;}
+.watch-card-icon{width:48px;height:48px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
+.watch-card-info{flex:1;}
+.watch-card-info h4{font-size:13px;font-weight:800;}
+.watch-card-info p{font-size:10px;color:var(--muted);margin-top:2px;}
+.watch-card-right{text-align:left;flex-shrink:0;}
+.watch-card-reward{font-size:15px;font-weight:900;color:var(--gold2);}
+.watch-card-lbl{font-size:9px;color:var(--muted);}
+.watch-done-badge{width:30px;height:30px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.watch-reset-info{text-align:center;font-size:11px;color:var(--muted);margin-top:14px;padding:10px;background:rgba(255,255,255,0.03);border-radius:10px;}
 </style>
 </head>
 <body>
@@ -343,22 +360,48 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:radial-gradi
   </div>
 </div>
 
-<!-- Interstitial Ad -->
-<div class="interstitial-overlay" id="interstitialOverlay">
-  <button class="inter-skip" id="interSkipBtn" onclick="closeInterstitial()">تخطي &#10005;</button>
-  <div style="font-size:10px;color:var(--muted);">إعلان</div>
-  <div class="inter-mock">
-    <div class="inter-mock-icon">&#9889;</div>
-    <div class="inter-mock-title">ZWIN Premium</div>
-    <div class="inter-mock-sub">ضاعف أرباحك الآن!</div>
+<div class="screen" id="screen-watch">
+  <div class="watch-screen">
+    <div class="watch-hero">
+      <div class="watch-hero-icon">📺</div>
+      <h2>شاهد وأكسب!</h2>
+      <p>كل إعلان تشاهده = مكافأة فورية 🎁<br>حتى 10 إعلانات يومياً — اختياري بالكامل!</p>
+      <div class="watch-progress-wrap">
+        <div class="watch-progress-label">
+          <span id="watchDoneCount">0 / 10 إعلانات</span>
+          <span id="watchDoneEarned">0 $ZWIN اليوم</span>
+        </div>
+        <div class="watch-progress-track">
+          <div class="watch-progress-fill" id="watchProgressFill" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+    <!-- زر الإعلان الخارجي الاختياري -->
+    <div style="background:linear-gradient(135deg,rgba(245,158,11,0.12),rgba(124,58,237,0.1));border:1px solid rgba(245,158,11,0.3);border-radius:16px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px;cursor:pointer;" onclick="openBonusAd()">
+      <div style="width:48px;height:48px;border-radius:13px;background:linear-gradient(135deg,#f59e0b,#d97706);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">🌐</div>
+      <div style="flex:1;">
+        <div style="font-size:13px;font-weight:800;">إعلان مكافأة خاص!</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:2px;">اضغط لفتح الإعلان واكسب مكافأة إضافية</div>
+      </div>
+      <div style="text-align:left;flex-shrink:0;">
+        <div style="font-size:15px;font-weight:900;color:var(--gold2);">+250</div>
+        <div style="font-size:9px;color:var(--muted);">$ZWIN</div>
+      </div>
+    </div>
+    <div class="watch-total-earned">
+      <div class="wte-label">💰 إجمالي ما كسبته من الإعلانات</div>
+      <div class="wte-val" id="watchTotalEarned">0 $ZWIN</div>
+    </div>
+    <div style="font-size:12px;font-weight:800;color:var(--purple2);margin-bottom:8px;">📺 إعلانات اليوم — كل إعلان = مكافأة فورية</div>
+    <div class="watch-cards" id="watchCards"></div>
+    <div class="watch-reset-info">🔄 تتجدد الإعلانات يومياً عند منتصف الليل</div>
   </div>
-  <div class="inter-counter" id="interCounter">يمكنك التخطي بعد 3 ثواني</div>
 </div>
 
 <div class="tabs">
   <button class="tab-btn active" onclick="switchTab('home',this)"><span class="icon">🏠</span>الرئيسية</button>
   <button class="tab-btn" onclick="switchTab('tasks',this)"><span class="icon">📋</span>المهام</button>
-  <button class="tab-btn" onclick="switchTab('upgrades',this)"><span class="icon">⚡</span>الترقيات</button>
+  <button class="tab-btn" onclick="switchTab('watch',this)"><span class="icon">📺</span>شاهد</button>
   <button class="tab-btn" onclick="switchTab('lb',this)"><span class="icon">🏆</span>الدوري</button>
   <button class="tab-btn" data-tab="airdrop" onclick="switchTab('airdrop',this)"><span class="icon">🎁</span>Airdrop</button>
 </div>
@@ -631,7 +674,7 @@ function switchTab(name,btn){
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('screen-'+name).classList.add('active');
   if(btn)btn.classList.add('active');
-  if(name==='tasks')renderTasks();if(name==='upgrades')renderUpgrades();if(name==='lb')renderLB();
+  if(name==='tasks')renderTasks();if(name==='upgrades')renderUpgrades();if(name==='lb')renderLB();if(name==='watch')renderWatchScreen();
 }
 
 // MODAL
@@ -675,24 +718,6 @@ const AD_DURATION = 5; // seconds
 let adTimer = null;
 let adSecondsLeft = AD_DURATION;
 let currentAdReward = 150;
-let interTimer = null;
-let interSecondsLeft = 3;
-let lastInterstitialTime = 0;
-let tapsSinceLastAd = 0;
-
-// Rotate banner ad every 8 seconds
-let bannerAdIndex = 0;
-function rotateBannerAd(){
-  const ad = ADS_CONFIG[bannerAdIndex % ADS_CONFIG.length];
-  document.getElementById('bannerAdIcon').textContent = ad.icon;
-  document.getElementById('bannerAdTitle').textContent = ad.title;
-  document.getElementById('bannerAdSub').textContent = ad.sub;
-  document.getElementById('bannerAdReward').textContent = '+'+ad.reward;
-  currentAdReward = ad.reward;
-  bannerAdIndex++;
-}
-rotateBannerAd();
-setInterval(rotateBannerAd, 8000);
 
 // Show Rewarded Ad
 function showRewardedAd(){
@@ -739,49 +764,118 @@ function closeRewardedAd(){
   document.getElementById('rewardedAdOverlay').classList.remove('open');
 }
 
-// Interstitial Ad (shows every 50 taps)
-function maybeShowInterstitial(){
-  tapsSinceLastAd++;
-  if(tapsSinceLastAd >= 50 && Date.now() - lastInterstitialTime > 60000){
-    tapsSinceLastAd = 0;
-    lastInterstitialTime = Date.now();
-    setTimeout(showInterstitial, 300);
-  }
+
+
+// ============================================================
+// WATCH & EARN SYSTEM — اختياري بالكامل
+// ============================================================
+const WATCH_ADS = [
+  {id:1,icon:'🎮',bg:'linear-gradient(135deg,#1a0d3a,#2d1060)',title:'إعلان الألعاب',reward:100},
+  {id:2,icon:'💎',bg:'linear-gradient(135deg,#0d1a0d,#1a3a1a)',title:'إعلان مميز',reward:120},
+  {id:3,icon:'🚀',bg:'linear-gradient(135deg,#1a0a00,#3a1a00)',title:'إعلان التطبيقات',reward:110},
+  {id:4,icon:'🌙',bg:'linear-gradient(135deg,#001a1a,#003a3a)',title:'إعلان ليلي',reward:130},
+  {id:5,icon:'⚡',bg:'linear-gradient(135deg,#1a1a00,#3a3a00)',title:'إعلان الطاقة',reward:115},
+  {id:6,icon:'🏆',bg:'linear-gradient(135deg,#1a0000,#3a0000)',title:'إعلان البطولة',reward:125},
+  {id:7,icon:'💰',bg:'linear-gradient(135deg,#0d0d1a,#1a1a3a)',title:'إعلان المال',reward:140},
+  {id:8,icon:'🎯',bg:'linear-gradient(135deg,#1a000d,#3a001a)',title:'إعلان الهدف',reward:105},
+  {id:9,icon:'🌟',bg:'linear-gradient(135deg,#0d1a0a,#1a3a14)',title:'إعلان النجوم',reward:135},
+  {id:10,icon:'🎁',bg:'linear-gradient(135deg,#1a0d1a,#3a1a3a)',title:'إعلان المكافآت',reward:150},
+];
+
+if(!S.watchAdsToday)S.watchAdsToday=0;
+if(!S.watchLastReset)S.watchLastReset=0;
+if(!S.watchTotalEarned)S.watchTotalEarned=0;
+if(!S.watchEarnedToday)S.watchEarnedToday=0;
+
+let watchAdTimer=null;
+
+function checkWatchReset(){
+  const today=new Date();today.setHours(0,0,0,0);
+  if((S.watchLastReset||0)<today.getTime()){S.watchAdsToday=0;S.watchEarnedToday=0;S.watchDoneIds=[];S.watchLastReset=today.getTime();save();}
 }
 
-function showInterstitial(){
-  const ad = ADS_CONFIG[Math.floor(Math.random()*ADS_CONFIG.length)];
-  interSecondsLeft = 3;
-  document.getElementById('interSkipBtn').className = 'inter-skip';
-  document.getElementById('interCounter').textContent = 'يمكنك التخطي بعد '+interSecondsLeft+' ثواني';
-  document.getElementById('interstitialOverlay').classList.add('open');
-  if(interTimer) clearInterval(interTimer);
-  interTimer = setInterval(()=>{
-    interSecondsLeft--;
-    if(interSecondsLeft <= 0){
-      clearInterval(interTimer);
-      document.getElementById('interSkipBtn').className = 'inter-skip show';
-      document.getElementById('interCounter').textContent = 'اضغط لإغلاق الإعلان';
-    } else {
-      document.getElementById('interCounter').textContent = 'يمكنك التخطي بعد '+interSecondsLeft+' ثواني';
+function renderWatchScreen(){
+  checkWatchReset();
+
+function openBonusAd(){
+  // فتح الإعلان الخارجي في تاب جديد والمكافأة بعد العودة
+  window.open('https://pl29178103.profitablecpmratenetwork.com/4f/f5/91/4ff5917f571d48a5bf87bad5870e219f.js','_blank');
+  setTimeout(()=>{
+    S.balance+=250;S.totalEarned+=250;
+    S.watchTotalEarned=(S.watchTotalEarned||0)+250;
+    toast('+250 $ZWIN 🎉 شكراً على مشاهدة الإعلان!');
+    spawnFloat(window.innerWidth/2,window.innerHeight/2,'+250');
+    updateUI();save();
+  },3000);
+}
+
+  if(!S.watchDoneIds)S.watchDoneIds=[];
+  const done=S.watchDoneIds.length;
+  document.getElementById('watchDoneCount').textContent=done+' / 10 إعلانات';
+  document.getElementById('watchDoneEarned').textContent=fmt(S.watchEarnedToday||0)+' $ZWIN اليوم';
+  document.getElementById('watchProgressFill').style.width=(done/10*100)+'%';
+  document.getElementById('watchTotalEarned').textContent=fmt(S.watchTotalEarned||0)+' $ZWIN';
+  const cards=document.getElementById('watchCards');
+  cards.innerHTML='';
+  if(done>=10){cards.innerHTML='<div style="text-align:center;padding:30px;color:var(--muted);font-size:13px;">✅ أنهيت إعلانات اليوم!<br><span style="color:var(--gold2);font-weight:700;">عُد غداً لمزيد من المكافآت</span></div>';return;}
+  WATCH_ADS.forEach((ad,i)=>{
+    if(!S.watchDoneIds)S.watchDoneIds=[];
+    const isDone=S.watchDoneIds.includes(i);
+    const isAvailable=!isDone;
+    const div=document.createElement('div');
+    div.className='watch-card'+(isDone?' done':'')+(isAvailable?' available':'');
+    div.innerHTML=`<div class="watch-card-icon" style="background:${ad.bg}">${ad.icon}</div>
+      <div class="watch-card-info"><h4>${ad.title}</h4>
+      <p>${isDone?'✅ تمت المشاهدة':'▶ اضغط للمشاهدة والكسب'}</p></div>
+      ${isDone?'<div class="watch-done-badge">✓</div>':`<div class="watch-card-right"><div class="watch-card-reward">+${ad.reward}</div><div class="watch-card-lbl">$ZWIN</div></div>`}`;
+    if(isAvailable)div.onclick=()=>startWatchAd(ad,i);
+    cards.appendChild(div);
+  });
+}
+
+function startWatchAd(ad,idx){currentWatchIdx=idx;
+  currentAdReward=ad.reward;
+  let secs=5;
+  document.getElementById('rewardedAmount').textContent='+'+ad.reward+' $ZWIN';
+  document.getElementById('adTimerCount').textContent=secs;
+  document.getElementById('adRingCircle').style.strokeDashoffset='138';
+  document.getElementById('adClaimBtn').className='ad-claim-btn';
+  document.getElementById('adClaimBtn').textContent='⏳ انتظر...';
+  document.getElementById('adClaimBtn').onclick=claimWatchAd;
+  document.getElementById('rewardedClose').className='ad-modal-close';
+  document.getElementById('rewardedAdOverlay').classList.add('open');
+  if(watchAdTimer)clearInterval(watchAdTimer);
+  watchAdTimer=setInterval(()=>{
+    secs--;
+    document.getElementById('adTimerCount').textContent=secs;
+    document.getElementById('adRingCircle').style.strokeDashoffset=138-(138*((5-secs)/5));
+    if(secs<=0){
+      clearInterval(watchAdTimer);
+      document.getElementById('adClaimBtn').className='ad-claim-btn ready';
+      document.getElementById('adClaimBtn').textContent='🎁 احصل على '+ad.reward+' $ZWIN!';
+      document.getElementById('rewardedClose').className='ad-modal-close show';
     }
-  }, 1000);
+  },1000);
 }
 
-function closeInterstitial(){
-  clearInterval(interTimer);
-  document.getElementById('interstitialOverlay').classList.remove('open');
+let currentWatchIdx = -1;
+function claimWatchAd(){
+  clearInterval(watchAdTimer);
+  S.balance+=currentAdReward;S.totalEarned+=currentAdReward;
+  S.watchAdsToday=(S.watchAdsToday||0)+1;
+  S.watchEarnedToday=(S.watchEarnedToday||0)+currentAdReward;
+  S.watchTotalEarned=(S.watchTotalEarned||0)+currentAdReward;
+  // Mark this specific ad as done
+  if(!S.watchDoneIds)S.watchDoneIds=[];
+  if(currentWatchIdx>=0)S.watchDoneIds.push(currentWatchIdx);
+  document.getElementById('rewardedAdOverlay').classList.remove('open');
+  document.getElementById('adClaimBtn').onclick=claimRewardedAd;
+  toast('+'+currentAdReward+' $ZWIN 🎉 شكراً على المشاهدة!');
+  spawnFloat(window.innerWidth/2,window.innerHeight/2,'+'+currentAdReward);
+  updateUI();save();renderWatchScreen();
 }
 
-// Hook into tap handler to trigger interstitial
-const _origHandleTap = handleTap;
-window.handleTap = function(e){
-  _origHandleTap(e);
-  maybeShowInterstitial();
-};
-// Reassign button
-document.getElementById('coinBtn').ontouchstart = window.handleTap;
-document.getElementById('coinBtn').onmousedown = window.handleTap;
+checkWatchReset();
 
 </script>
 </body>
